@@ -143,9 +143,73 @@ def test_skill_initialization():
         raise AssertionError(f"Skill initialization test failed: {e}")
 
 
+def test_package_skill():
+    """Test skill packaging functionality"""
+    try:
+        package = load_forge_module("package_skill")
+        init_skill = load_forge_module("init_skill")
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            # Create a test skill
+            skill_name = "package-test-skill"
+            skill_path = Path(tmpdir) / skill_name
+            init_skill.init_skill(skill_name, tmpdir)
+
+            # Package it
+            output_dir = Path(tmpdir) / "output"
+            output_dir.mkdir()
+
+            package_path = package.package_skill(str(skill_path), str(output_dir))
+
+            # Check package was created
+            assert Path(package_path).exists()
+            assert package_path.endswith(".zip")
+
+    except Exception as e:
+        raise AssertionError(f"Skill packaging test failed: {e}")
+
+
+def test_validation_edge_cases():
+    """Test validation with edge cases"""
+    try:
+        validate = load_forge_module("quick_validate")
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            skill_path = Path(tmpdir)
+            skill_md = skill_path / "SKILL.md"
+
+            # Test with unexpected YAML keys
+            skill_md.write_text("""---
+name: test-skill
+description: Valid description
+unexpected_key: should trigger warning
+---
+# Content
+""")
+            valid, message = validate.validate_skill(skill_path)
+            assert valid == False
+            assert "unexpected" in message.lower()
+
+            # Test with very long description
+            long_desc = "x" * 1025  # Over 1024 limit
+            skill_md.write_text(f"""---
+name: test-skill
+description: {long_desc}
+---
+""")
+            valid, message = validate.validate_skill(skill_path)
+            assert valid == False
+            assert "too long" in message.lower()
+
+    except Exception as e:
+        raise AssertionError(f"Edge case validation test failed: {e}")
+
+
 # Export all test functions
 __all__ = [
     "test_skill_validation",
     "test_frontmatter_parsing",
-    "test_skill_initialization"
+    "test_skill_initialization",
+    "test_package_skill",
+    "test_validation_edge_cases"
 ]

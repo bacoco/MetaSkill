@@ -5,11 +5,15 @@ All notable changes to EvolveSkill will be documented in this file.
 ## [2.1.0] - 2025-10-26
 
 ### Added
-- **Test Suite**: Comprehensive unit tests for all modules
-  - Cortex API tests (event limits, JSON validity)
-  - Synapse pattern detection tests
-  - Forge skill validation tests
+- **Test Suite**: Comprehensive unit tests for all modules (17+ tests)
+  - Cortex API tests: event limits, JSON validity, filters, pattern analysis, session summary, atomic writes
+  - Synapse tests: pattern detection, config validation, data models, cortex reader, report generation
+  - Forge tests: skill validation, frontmatter parsing, initialization, packaging, edge cases
   - Shell script syntax validation
+- **Complete Docstrings**: Professional documentation for all functions
+  - Detailed Args, Returns, Raises sections
+  - Usage examples and notes
+  - Clear algorithm descriptions
 - **Centralized Configuration**: New `config.py` module for shared settings
   - MAX_EVENTS configurable (default: 1000)
   - LOG_SIZE_MB configurable (default: 10MB)

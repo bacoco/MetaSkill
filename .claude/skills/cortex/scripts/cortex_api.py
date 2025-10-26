@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """
 Cortex API - Interface pour que les autres skills puissent lire/écrire dans la mémoire Cortex
+
+This module provides a centralized API for reading and writing to Cortex memory files,
+enabling cross-skill communication and persistent session tracking.
 """
 
 import json
@@ -9,7 +12,7 @@ import sys
 import tempfile
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Optional, Any, Union
 
 # Optional cross-platform file locking
 try:
@@ -264,7 +267,21 @@ class CortexMemory:
         }
 
     def _suggest_skill_name(self, event_type: str) -> str:
-        """Suggérer un nom de skill basé sur le type d'événement"""
+        """
+        Suggérer un nom de skill basé sur le type d'événement.
+
+        Args:
+            event_type: Type d'événement (e.g., 'api_call', 'data_processing')
+
+        Returns:
+            str: Nom de skill suggéré au format hyphen-case
+
+        Examples:
+            >>> _suggest_skill_name('api_call')
+            'api-optimizer'
+            >>> _suggest_skill_name('custom_event')
+            'custom-event-skill'
+        """
         # Mapping simple type → skill name
         suggestions = {
             "api_call": "api-optimizer",
@@ -279,7 +296,22 @@ class CortexMemory:
         return suggestions.get(event_type, f"{event_type.replace('_', '-')}-skill")
 
     def _calculate_priority(self, count: int, days: int) -> str:
-        """Calculer la priorité basée sur la fréquence"""
+        """
+        Calculer la priorité basée sur la fréquence d'occurrence.
+
+        Args:
+            count: Nombre total d'occurrences
+            days: Nombre de jours analysés
+
+        Returns:
+            str: Niveau de priorité ('critical', 'high', 'medium', 'low')
+
+        Note:
+            - critical: ≥3 fois par jour
+            - high: ≥1 fois par jour
+            - medium: ≥0.5 fois par jour (3-4 fois/semaine)
+            - low: <0.5 fois par jour
+        """
         frequency = count / days
 
         if frequency >= 3:  # 3+ fois par jour
@@ -333,8 +365,22 @@ class CortexMemory:
         # Ensure log file doesn't grow without bound
         self._truncate_log_if_needed()
 
-    def _atomic_write_json(self, path: Path, data: Dict[str, Any]):
-        """Écrit un JSON de manière atomique (tempfile + os.replace)"""
+    def _atomic_write_json(self, path: Path, data: Dict[str, Any]) -> None:
+        """
+        Écrit un JSON de manière atomique pour éviter la corruption de fichiers.
+
+        Cette méthode utilise un fichier temporaire et os.replace() pour garantir
+        que l'écriture est atomique - soit le fichier est complètement écrit,
+        soit il reste inchangé.
+
+        Args:
+            path: Chemin du fichier de destination
+            data: Dictionnaire à sérialiser en JSON
+
+        Raises:
+            OSError: Si l'écriture ou le remplacement échoue
+            json.JSONDecodeError: Si les données ne sont pas sérialisables
+        """
         path = Path(path)
         tmp_fd, tmp_path = tempfile.mkstemp(prefix=path.name, dir=str(path.parent))
         try:

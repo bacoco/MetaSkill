@@ -126,9 +126,111 @@ def test_data_models():
         raise AssertionError(f"Data models test failed: {e}")
 
 
+def test_cortex_reader():
+    """Test Cortex data reader functionality"""
+    try:
+        reader_module = load_module(
+            "cortex_reader",
+            ".claude/skills/synapse/scripts/modules/cortex_reader.py"
+        )
+
+        config_module = load_module(
+            "config_manager",
+            ".claude/skills/synapse/scripts/modules/config_manager.py"
+        )
+
+        import tempfile
+        from pathlib import Path
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            # Create test Cortex files
+            log_path = Path(tmpdir) / ".cortex_log.md"
+            status_path = Path(tmpdir) / ".cortex_status.json"
+
+            log_path.write_text("""# Agent Work Log - Session 2025-10-26-14:30
+
+## Session Information
+- **Agent**: Test Agent
+- **Files Changed**: 2
+
+## Recent Commits
+- Test commit 1
+""")
+
+            import json
+            status_path.write_text(json.dumps({
+                "timestamp": "2025-10-26-14:30",
+                "agent": "Test Agent",
+                "session_info": {"has_git": True}
+            }))
+
+            # Create reader and test
+            config = config_module.ConfigManager()
+            reader = reader_module.CortexDataReader(tmpdir, config)
+
+            data = reader.read_all_cortex_data()
+            assert "sessions" in data
+            assert "current_status" in data
+
+    except Exception as e:
+        raise AssertionError(f"Cortex reader test failed: {e}")
+
+
+def test_report_generator():
+    """Test report generation"""
+    try:
+        report_module = load_module(
+            "report_generator",
+            ".claude/skills/synapse/scripts/modules/report_generator.py"
+        )
+
+        config_module = load_module(
+            "config_manager",
+            ".claude/skills/synapse/scripts/modules/config_manager.py"
+        )
+
+        config = config_module.ConfigManager()
+        generator = report_module.ReportGenerator(config)
+
+        # Create test data
+        patterns = {
+            "test_pattern": {
+                "count": 10,
+                "frequency": 1.5,
+                "priority": "high"
+            }
+        }
+
+        recommendations = [
+            {
+                "skill_name": "test-skill",
+                "description": "Test skill",
+                "priority_score": 0.8,
+                "reason": "Test reason"
+            }
+        ]
+
+        cortex_data = {
+            "sessions": [],
+            "current_status": {}
+        }
+
+        # Generate report
+        report = generator.generate_report(patterns, recommendations, cortex_data)
+
+        assert "summary" in report
+        assert "recommendations" in report
+        assert len(report["recommendations"]) == 1
+
+    except Exception as e:
+        raise AssertionError(f"Report generator test failed: {e}")
+
+
 # Export all test functions
 __all__ = [
     "test_pattern_detection",
     "test_config_validation",
-    "test_data_models"
+    "test_data_models",
+    "test_cortex_reader",
+    "test_report_generator"
 ]
