@@ -180,7 +180,7 @@ print(f"Files changed: {context['files_changed']}")
 
 ---
 
-### `get_soul_instance() -> CortexMemory`
+### `get_cortex_instance() -> CortexMemory`
 
 Get direct access to Cortex memory instance for advanced usage.
 
@@ -191,7 +191,7 @@ Get direct access to Cortex memory instance for advanced usage.
 **Example:**
 
 ```python
-soul = get_soul_instance()
+soul = get_cortex_instance()
 
 # Direct file path access
 print(f"Log file: {soul.log_file}")

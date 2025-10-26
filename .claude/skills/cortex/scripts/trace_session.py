@@ -15,7 +15,7 @@ import sys
 
 # Import Cortex API
 try:
-    from cortex_api import add_cortex_event, get_soul_instance
+    from cortex_api import add_cortex_event, get_cortex_instance
     Cortex_API_AVAILABLE = True
 except ImportError:
     Cortex_API_AVAILABLE = False
