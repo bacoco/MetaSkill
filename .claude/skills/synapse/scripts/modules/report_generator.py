@@ -7,10 +7,15 @@ import json
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Any
+import sys
 
-from .data_models import PatternInfo, SkillRecommendation
-from .config_manager import ConfigManager
+MODULE_DIR = Path(__file__).resolve().parent
+if str(MODULE_DIR) not in sys.path:
+    sys.path.insert(0, str(MODULE_DIR))
+
+from data_models import PatternInfo, SkillRecommendation  # type: ignore
+from config_manager import ConfigManager  # type: ignore
 
 
 class ReportGenerator:
@@ -22,11 +27,21 @@ class ReportGenerator:
 
     def generate_report(
         self,
-        patterns: Dict[str, PatternInfo],
-        recommendations: List[SkillRecommendation],
+        patterns: Dict[str, Any],
+        recommendations: List[Any],
         cortex_data: Dict
     ) -> Dict:
         """Generate comprehensive report"""
+
+        normalized_patterns = {
+            key: self._coerce_pattern(key, value)
+            for key, value in (patterns or {}).items()
+        }
+
+        normalized_recommendations = [
+            self._coerce_recommendation(item)
+            for item in (recommendations or [])
+        ]
 
         report = {
             "metadata": {
@@ -34,15 +49,84 @@ class ReportGenerator:
                 "analyzer": "Synapse Pattern Detector",
                 "version": "2.0.0"
             },
-            "summary": self._generate_summary(patterns, recommendations, cortex_data),
-            "patterns": self._format_patterns(patterns),
-            "recommendations": self._format_recommendations(recommendations),
+            "summary": self._generate_summary(normalized_patterns, normalized_recommendations, cortex_data),
+            "patterns": self._format_patterns(normalized_patterns),
+            "recommendations": self._format_recommendations(normalized_recommendations),
             "trend_analysis": self._generate_trend_analysis(cortex_data),
-            "priority_matrix": self._generate_priority_matrix(recommendations),
-            "actionable_insights": self._generate_insights(patterns, recommendations)
+            "priority_matrix": self._generate_priority_matrix(normalized_recommendations),
+            "actionable_insights": self._generate_insights(normalized_patterns, normalized_recommendations)
         }
 
         return report
+
+    def _coerce_pattern(self, key: str, pattern: Any) -> PatternInfo:
+        """Convert raw pattern data into a PatternInfo instance."""
+
+        if isinstance(pattern, PatternInfo):
+            return pattern
+
+        if isinstance(pattern, dict):
+            metadata = {
+                k: v
+                for k, v in pattern.items()
+                if k not in {"pattern_type", "description", "frequency", "count", "impact_score", "trend_score", "urgency_score", "examples"}
+            }
+
+            frequency = pattern.get("frequency", pattern.get("count", 0))
+            urgency_raw = pattern.get("urgency_score", pattern.get("priority", 0))
+            try:
+                urgency_score = float(urgency_raw)
+            except (TypeError, ValueError):
+                urgency_score = 0.0
+
+            examples = pattern.get("examples", [])
+            if not isinstance(examples, list):
+                examples = [str(examples)] if examples else []
+
+            return PatternInfo(
+                pattern_type=pattern.get("pattern_type", key),
+                description=pattern.get("description", key.replace('_', ' ').title()),
+                frequency=int(frequency or 0),
+                impact_score=float(pattern.get("impact_score", 0.0)),
+                trend_score=float(pattern.get("trend_score", 0.0)),
+                urgency_score=urgency_score,
+                examples=[str(example) for example in examples],
+                metadata=metadata,
+            )
+
+        raise TypeError(f"Unsupported pattern data type: {type(pattern)!r}")
+
+    def _coerce_recommendation(self, recommendation: Any) -> SkillRecommendation:
+        """Convert raw recommendation data into a SkillRecommendation instance."""
+
+        if isinstance(recommendation, SkillRecommendation):
+            return recommendation
+
+        if isinstance(recommendation, dict):
+            supporting_patterns = recommendation.get("supporting_patterns", [])
+            if not isinstance(supporting_patterns, list):
+                supporting_patterns = [str(supporting_patterns)]
+
+            example_use_cases = recommendation.get("example_use_cases", [])
+            if not isinstance(example_use_cases, list):
+                example_use_cases = [str(example_use_cases)]
+
+            return SkillRecommendation(
+                skill_name=recommendation.get("skill_name", "unnamed-skill"),
+                skill_type=recommendation.get("skill_type", "general"),
+                description=recommendation.get("description", ""),
+                reason=recommendation.get("reason", ""),
+                priority_score=float(recommendation.get("priority_score", 0.0)),
+                frequency_score=float(recommendation.get("frequency_score", recommendation.get("frequency", 0.0))),
+                impact_score=float(recommendation.get("impact_score", 0.0)),
+                trend_score=float(recommendation.get("trend_score", 0.0)),
+                urgency_score=float(recommendation.get("urgency_score", recommendation.get("priority", 0.0))),
+                roi_score=float(recommendation.get("roi_score", 0.0)),
+                supporting_patterns=[str(item) for item in supporting_patterns],
+                example_use_cases=[str(item) for item in example_use_cases],
+            )
+
+        raise TypeError(f"Unsupported recommendation data type: {type(recommendation)!r}")
 
     def _generate_summary(
         self,

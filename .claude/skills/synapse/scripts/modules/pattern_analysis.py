@@ -8,9 +8,15 @@ import logging
 from datetime import datetime
 from collections import Counter, defaultdict
 from typing import Dict, List
+from pathlib import Path
+import sys
 
-from .data_models import SessionData, PatternInfo
-from .config_manager import ConfigManager
+MODULE_DIR = Path(__file__).resolve().parent
+if str(MODULE_DIR) not in sys.path:
+    sys.path.insert(0, str(MODULE_DIR))
+
+from data_models import SessionData, PatternInfo  # type: ignore
+from config_manager import ConfigManager  # type: ignore
 
 
 class PatternDetector:
@@ -64,12 +70,8 @@ class PatternDetector:
         timestamps = []
         for session in sessions:
             # Validate input type defensively
-            try:
-                from .data_models import SessionData as _SessionData
-                if not isinstance(session, _SessionData):
-                    continue
-            except Exception:
-                pass
+            if not isinstance(session, SessionData):
+                continue
             try:
                 # Parse timestamp format: 2025-10-25-12:26
                 dt = datetime.strptime(session.timestamp, "%Y-%m-%d-%H:%M")
