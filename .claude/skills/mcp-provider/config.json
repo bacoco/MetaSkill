@@ -1,0 +1,10 @@
+{
+  "approved_sources": [
+    "https://github.com/modelcontextprotocol/servers"
+  ],
+  "docker_enabled": true,
+  "sandbox_profile": "strict",
+  "max_candidates": 10,
+  "cache_enabled": true,
+  "cache_ttl_hours": 24
+}
