@@ -41,7 +41,7 @@ else
 fi
 
 # Clean Python cache
-echo "🧹 Cleaning Python cache..."
+echo "🧹 Cleaning Python cache and artifacts..."
 find "$BUILD_DIR" -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
 find "$BUILD_DIR" -type f -name "*.pyc" -delete 2>/dev/null || true
 find "$BUILD_DIR" -type f -name "*.pyo" -delete 2>/dev/null || true
@@ -49,6 +49,9 @@ find "$BUILD_DIR" -type f -name "*.pyo" -delete 2>/dev/null || true
 # Clean OS artifacts
 find "$BUILD_DIR" -type f -name ".DS_Store" -delete 2>/dev/null || true
 find "$BUILD_DIR" -type f -name "Thumbs.db" -delete 2>/dev/null || true
+
+# Clean individual skill zips (we have one global zip now)
+find "$BUILD_DIR" -type f -name "*.zip" -delete 2>/dev/null || true
 
 # Create zip
 echo "🗜️  Creating archive..."
@@ -66,16 +69,20 @@ echo ""
 echo "📦 Archive: $OUTPUT_DIR/$ARCHIVE_NAME"
 echo "📏 Size: $SIZE"
 echo ""
-echo "📋 Contents:"
-echo "  - SOUL: Universal memory system"
-echo "  - NEXUS: Automatic skill generator"
-echo "  - skill-generator: Skill creation tool"
-echo "  - Documentation: README + INSTALLATION"
+echo "📋 MetaSkill - Complete Package:"
+echo "  ✅ SOUL - Universal memory system"
+echo "  ✅ NEXUS - Automatic skill generator"
+echo "  ✅ skill-generator - Skill creation tool"
+echo "  ✅ Complete documentation"
+echo ""
+echo "📦 Single archive - all three skills together"
+echo "   (They're interdependent, must be installed as a set)"
 echo ""
 echo "🚀 Installation:"
 echo "  unzip $ARCHIVE_NAME"
 echo "  cp -r .claude/skills /path/to/your/project/.claude/"
+echo "  cd /path/to/your/project/.claude/skills/soul/scripts"
+echo "  ./install.sh"
 echo ""
-echo "🌐 Compatible with ALL LLMs:"
-echo "  - Claude Code, GPT, Gemini, Cursor, Aider, and more!"
+echo "🌐 Compatible with ALL AI coding assistants!"
 echo ""
