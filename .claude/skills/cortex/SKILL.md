@@ -1,5 +1,5 @@
 ---
-name: soul
+name: cortex
 description: Automatic session tracking and memory system for Claude Code. Activates when working in git repositories to track file changes, commits, and session context. Creates .cortex_log.md (session history), .cortex_status.json (current state), and .cortex_handoff.md (next steps) for session continuity across conversations. Use when needing persistent memory, session handoffs, or work history tracking.
 allowed-tools: Read, Write, Bash, Grep, Glob
 ---

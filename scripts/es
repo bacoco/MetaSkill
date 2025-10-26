@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# EvolveSkill helpers (multi-LLM friendly)
+set -euo pipefail
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"/.. && pwd)"
+
+usage() {
+  cat <<EOF
+Usage: es-<cmd> [options]
+
+Commands:
+  install        Install Cortex hooks in current repo
+  trace          Force a Cortex trace now
+  analyze        Run Synapse analyzer (env: THRESHOLD, DAYS, OUTPUT)
+  auto           Run Synapse auto-skill generator (env: THRESHOLD, DAYS)
+  package        Build distribution zip
+
+Examples:
+  THRESHOLD=5 DAYS=14 OUTPUT=Synapse_RECOMMENDATIONS.md ./scripts/es analyze
+EOF
+}
+
+cmd=${1:-}
+case "$cmd" in
+  install)
+    bash "$ROOT_DIR/.claude/skills/cortex/scripts/install.sh" ;;
+  trace)
+    python3 "$ROOT_DIR/.claude/skills/cortex/scripts/trace_session.py" --repo "$ROOT_DIR" --verbose ;;
+  analyze)
+    THRESHOLD="${THRESHOLD:-5}" DAYS="${DAYS:-7}" OUTPUT="${OUTPUT:-Synapse_RECOMMENDATIONS.md}"
+    python3 "$ROOT_DIR/.claude/skills/synapse/scripts/synapse_analyzer.py" --repo "$ROOT_DIR" --threshold "$THRESHOLD" --days "$DAYS" --output "$OUTPUT" ;;
+  auto)
+    THRESHOLD="${THRESHOLD:-5}" DAYS="${DAYS:-7}"
+    python3 "$ROOT_DIR/.claude/skills/synapse/scripts/auto_skill_generator.py" --threshold "$THRESHOLD" --days "$DAYS" ;;
+  package)
+    bash "$ROOT_DIR/package_evolveskill.sh" "${VERSION:-2.0.0}" ;;
+  ""|-h|--help)
+    usage ;;
+  *)
+    echo "Unknown command: $cmd" >&2
+    usage
+    exit 1 ;;
+ esac

@@ -11,7 +11,7 @@ echo "🔧 Building skill distribution zips..."
 echo ""
 
 # Array of skills to package
-SKILLS=("soul" "nexus" "skill-creator")
+SKILLS=("cortex" "synapse" "forge")
 
 for skill in "${SKILLS[@]}"; do
     echo "📦 Packaging ${skill}..."
@@ -42,5 +42,5 @@ echo "Available packages:"
 ls -lh "$OUTPUT_DIR"/*.zip | awk '{print "  -", $9, "("$5")"}'
 echo ""
 echo "Usage:"
-echo "  unzip soul.zip"
-echo "  cd soul && ./scripts/install.sh --model=claude"
+echo "  unzip cortex.zip"
+echo "  cd cortex && ./scripts/install.sh --model=claude"

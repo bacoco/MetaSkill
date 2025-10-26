@@ -18,7 +18,7 @@ cd /path/to/your/project
 ls -la .claude/skills/synapse/
 
 # 3. Test Synapse
-python .claude/skills/synapse/scripts/nexus_analyzer.py --dry-run
+python .claude/skills/synapse/scripts/synapse_analyzer.py --dry-run
 ```
 
 That's it! Synapse is ready to use.
@@ -36,10 +36,10 @@ Automatically run Synapse every 30 minutes:
 crontab -e
 
 # Add this line for every 30 minutes
-*/30 * * * * /path/to/.claude/skills/scripts/nexus_auto_watch.sh >> /path/to/.nexus_cron.log 2>&1
+*/30 * * * * /path/to/.claude/skills/synapse/scripts/synapse_auto_watch.sh >> /path/to/.synapse_cron.log 2>&1
 
 # Or for hourly monitoring
-0 * * * * /path/to/.claude/skills/scripts/nexus_auto_watch.sh >> /path/to/.nexus_cron.log 2>&1
+0 * * * * /path/to/.claude/skills/synapse/scripts/synapse_auto_watch.sh >> /path/to/.synapse_cron.log 2>&1
 ```
 
 **Adjust path:**
@@ -47,7 +47,7 @@ crontab -e
 ```bash
 # Get absolute path
 PROJECT_DIR=$(pwd)
-echo "*/30 * * * * $PROJECT_DIR/.claude/skills/scripts/nexus_auto_watch.sh >> $PROJECT_DIR/.nexus_cron.log 2>&1" | crontab -
+echo "*/30 * * * * $PROJECT_DIR/.claude/skills/synapse/scripts/synapse_auto_watch.sh >> $PROJECT_DIR/.synapse_cron.log 2>&1" | crontab -
 ```
 
 **Verify cron:**
@@ -57,7 +57,7 @@ echo "*/30 * * * * $PROJECT_DIR/.claude/skills/scripts/nexus_auto_watch.sh >> $P
 crontab -l
 
 # Check logs after 30 minutes
-tail -f .nexus_cron.log
+tail -f .synapse_cron.log
 ```
 
 ### Option 2: Git Hook
@@ -71,7 +71,7 @@ cat > .git/hooks/post-commit << 'EOF'
 # Run Synapse in background after commits
 
 PROJECT_DIR=$(git rev-parse --show-toplevel)
-"$PROJECT_DIR/.claude/skills/scripts/nexus_auto_watch.sh" >> "$PROJECT_DIR/.nexus_git_hook.log" 2>&1 &
+"$PROJECT_DIR/.claude/skills/synapse/scripts/synapse_auto_watch.sh" >> "$PROJECT_DIR/.synapse_git_hook.log" 2>&1 &
 EOF
 
 # Make executable
@@ -87,7 +87,7 @@ git add .gitignore
 git commit -m "test: Synapse git hook"
 
 # Check hook ran
-tail .nexus_git_hook.log
+tail .synapse_git_hook.log
 ```
 
 ### Option 3: Manual Runs
@@ -99,17 +99,17 @@ Run Synapse manually whenever needed:
 python .claude/skills/synapse/scripts/auto_skill_generator.py
 
 # Analyze only (no generation)
-python .claude/skills/synapse/scripts/nexus_analyzer.py
+python .claude/skills/synapse/scripts/synapse_analyzer.py
 ```
 
 ## Configuration Setup
 
 ### Basic Configuration
 
-Create `.nexus_config.json`:
+Create `.synapse_config.json`:
 
 ```bash
-cat > .nexus_config.json << 'EOF'
+cat > .synapse_config.json << 'EOF'
 {
   "analysis": {
     "threshold": 5,
@@ -117,18 +117,18 @@ cat > .nexus_config.json << 'EOF'
     "auto_threshold": "high"
   },
   "sources": {
-    "soul_memory": true,
+    "cortex_memory": true,
     "prd_files": true,
     "task_lists": true
   },
   "auto_generation": {
     "enabled": true,
     "max_skills_per_run": 5,
-    "log_to_soul": true
+    "log_to_cortex": true
   },
   "logging": {
     "enabled": true,
-    "file": ".nexus_auto.log",
+    "file": ".synapse_auto.log",
     "level": "INFO"
   }
 }
@@ -158,12 +158,12 @@ For non-standard project structures:
 ls -la .claude/skills/synapse/scripts/
 
 # Expected output:
-# nexus_analyzer.py
+# synapse_analyzer.py
 # auto_skill_generator.py
-# soul_integration.py
+# cortex_integration.py
 
 # 2. Test analyzer
-python .claude/skills/synapse/scripts/nexus_analyzer.py --dry-run
+python .claude/skills/synapse/scripts/synapse_analyzer.py --dry-run
 
 # Expected output:
 # 📊 Synapse Unified Analyzer
@@ -187,7 +187,7 @@ python -c "from cortex_api import get_cortex_memory; print('✅ Cortex API avail
 python -c "from cortex_api import add_cortex_event; add_cortex_event('test', 'Synapse test event')"
 
 # 3. Run Synapse to detect
-python .claude/skills/synapse/scripts/nexus_analyzer.py
+python .claude/skills/synapse/scripts/synapse_analyzer.py
 ```
 
 ### Test Automatic Monitoring
@@ -196,7 +196,7 @@ If using cron:
 
 ```bash
 # Wait 30 minutes, then check logs
-tail -f .nexus_cron.log
+tail -f .synapse_cron.log
 ```
 
 If using git hook:
@@ -206,7 +206,7 @@ If using git hook:
 git commit --allow-empty -m "test: Synapse monitoring"
 
 # Check log
-tail .nexus_git_hook.log
+tail .synapse_git_hook.log
 ```
 
 ## Troubleshooting Installation
@@ -215,7 +215,7 @@ tail .nexus_git_hook.log
 
 **Error:**
 ```
-ModuleNotFoundError: No module named 'soul_api'
+ModuleNotFoundError: No module named 'cortex_api'
 ```
 
 **Solution:**
@@ -233,15 +233,15 @@ cd .claude/skills/cortex/scripts
 
 **Error:**
 ```
-Permission denied: .nexus_auto.log
+Permission denied: .synapse_auto.log
 ```
 
 **Solution:**
 
 ```bash
 # Create log file with correct permissions
-touch .nexus_auto.log
-chmod 644 .nexus_auto.log
+touch .synapse_auto.log
+chmod 644 .synapse_auto.log
 
 # For cron, ensure directory is writable
 chmod 755 $(pwd)
@@ -288,7 +288,7 @@ chmod +x .git/hooks/post-commit
 .git/hooks/post-commit
 
 # Check for errors
-cat .nexus_git_hook.log
+cat .synapse_git_hook.log
 ```
 
 ## Uninstallation
@@ -302,7 +302,7 @@ crontab -e
 # Remove Synapse line, save and exit
 
 # Verify removal
-crontab -l | grep nexus
+crontab -l | grep synapse
 # Should show nothing
 ```
 
@@ -315,10 +315,10 @@ rm .git/hooks/post-commit
 ### Remove Configuration
 
 ```bash
-rm .nexus_config.json
-rm .nexus_auto.log
-rm .nexus_cron.log
-rm .nexus_git_hook.log
+rm .synapse_config.json
+rm .synapse_auto.log
+rm .synapse_cron.log
+rm .synapse_git_hook.log
 ```
 
 ### Keep Synapse, Disable Auto-Generation
@@ -357,7 +357,7 @@ For multiple projects sharing skills:
 # Project structure
 ~/workspace/
 ├── .shared_skills/
-│   └── nexus/
+│   └── synapse/
 └── project1/
     └── .claude/
         └── skills/ -> ../../.shared_skills/
@@ -382,8 +382,8 @@ Setup cron for each:
 crontab -e
 
 # Add line for each project
-*/30 * * * * /home/user/workspace/project1/.claude/skills/scripts/nexus_auto_watch.sh
-*/30 * * * * /home/user/workspace/project2/.claude/skills/scripts/nexus_auto_watch.sh
+*/30 * * * * /home/user/workspace/project1/.claude/skills/synapse/scripts/synapse_auto_watch.sh
+*/30 * * * * /home/user/workspace/project2/.claude/skills/synapse/scripts/synapse_auto_watch.sh
 ```
 
 ## Platform-Specific Notes

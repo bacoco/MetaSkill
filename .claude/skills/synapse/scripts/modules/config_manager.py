@@ -28,7 +28,8 @@ class ConfigManager:
             "problem_recurrence_threshold": 2,
             "temporal_pattern_window_days": 7,
             "enable_ml_clustering": False,
-            "enable_nlp_analysis": False
+            "enable_nlp_analysis": False,
+            "max_log_parse_bytes": 2097152  # 2 MB safety cap when parsing .cortex_log.md
         },
         "scoring": {
             "frequency_weight": 0.25,

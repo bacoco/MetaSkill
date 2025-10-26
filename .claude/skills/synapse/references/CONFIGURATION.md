@@ -4,7 +4,7 @@ Complete configuration options for Synapse.
 
 ## Configuration File
 
-Create `.nexus_config.json` in your project root:
+Create `.synapse_config.json` in your project root:
 
 ```json
 {
@@ -14,7 +14,7 @@ Create `.nexus_config.json` in your project root:
     "auto_threshold": "high"
   },
   "sources": {
-    "soul_memory": true,
+    "cortex_memory": true,
     "prd_files": true,
     "task_lists": true,
     "code_analysis": false
@@ -33,12 +33,12 @@ Create `.nexus_config.json` in your project root:
   "auto_generation": {
     "enabled": true,
     "max_skills_per_run": 5,
-    "log_to_soul": true,
+    "log_to_cortex": true,
     "dry_run": false
   },
   "skill_generation": {
     "template": "default",
-    "include_soul_api": true,
+    "include_cortex_api": true,
     "progressive_disclosure": true
   },
   "paths": {
@@ -48,7 +48,7 @@ Create `.nexus_config.json` in your project root:
   },
   "logging": {
     "enabled": true,
-    "file": ".nexus_auto.log",
+    "file": ".synapse_auto.log",
     "level": "INFO"
   }
 }
@@ -95,16 +95,16 @@ Controls which sources Synapse analyzes.
 
 ```json
 "sources": {
-  "soul_memory": true,    // Analyze Cortex patterns
-  "prd_files": true,      // Analyze PRD requirements
-  "task_lists": true,     // Analyze TODO files
-  "code_analysis": false  // Analyze codebase (future)
+  "cortex_memory": true,    // Analyze Cortex patterns
+  "prd_files": true,        // Analyze PRD requirements
+  "task_lists": true,       // Analyze TODO files
+  "code_analysis": false    // Analyze codebase (future)
 }
 ```
 
 **Options:**
 
-- **`soul_memory`** (bool, default: true)
+- **`cortex_memory`** (bool, default: true)
   - Enable Cortex memory pattern detection
   - Recommended: true (core feature)
 
@@ -193,11 +193,11 @@ Controls recommendation output format.
 Controls automatic skill generation behavior.
 
 ```json
-"auto_generation": {
-  "enabled": true,
-  "max_skills_per_run": 5,
-  "log_to_soul": true,
-  "dry_run": false
+  "auto_generation": {
+    "enabled": true,
+    "max_skills_per_run": 5,
+    "log_to_cortex": true,
+    "dry_run": false
 }
 ```
 
@@ -212,7 +212,7 @@ Controls automatic skill generation behavior.
   - Prevents generating too many skills at once
   - 0 = unlimited
 
-- **`log_to_soul`** (bool, default: true)
+- **`log_to_cortex`** (bool, default: true)
   - Record skill generation events in Cortex
   - Recommended: true (enables tracking)
 
@@ -225,10 +225,10 @@ Controls automatic skill generation behavior.
 Controls how generated skills are structured.
 
 ```json
-"skill_generation": {
-  "template": "default",
-  "include_soul_api": true,
-  "progressive_disclosure": true
+  "skill_generation": {
+    "template": "default",
+    "include_cortex_api": true,
+    "progressive_disclosure": true
 }
 ```
 
@@ -238,7 +238,7 @@ Controls how generated skills are structured.
   - Skill template to use
   - Options: "default" | "minimal" | "advanced"
 
-- **`include_soul_api`** (bool, default: true)
+- **`include_cortex_api`** (bool, default: true)
   - Auto-integrate Cortex API in generated skills
   - Recommended: true (enables pattern tracking)
 
@@ -276,7 +276,7 @@ Controls log output.
 ```json
 "logging": {
   "enabled": true,
-  "file": ".nexus_auto.log",
+  "file": ".synapse_auto.log",
   "level": "INFO"
 }
 ```
@@ -286,7 +286,7 @@ Controls log output.
 - **`enabled`** (bool, default: true)
   - Enable logging
 
-- **`file`** (string, default: ".nexus_auto.log")
+- **`file`** (string, default: ".synapse_auto.log")
   - Log file path
 
 - **`level`** (string, default: "INFO")
@@ -334,7 +334,7 @@ Generates skills for even infrequent patterns.
 ```json
 {
   "sources": {
-    "soul_memory": true,
+    "cortex_memory": true,
     "prd_files": false,
     "task_lists": false
   }
@@ -411,10 +411,10 @@ python auto_skill_generator.py --auto-threshold medium
 
 ```bash
 # Override config file location
-export Synapse_CONFIG="/path/to/custom_config.json"
+export SYNAPSE_CONFIG="/path/to/custom_config.json"
 
 # Override output file
-export Synapse_OUTPUT="/path/to/custom_output.md"
+export SYNAPSE_OUTPUT="/path/to/custom_output.md"
 
 python auto_skill_generator.py
 ```

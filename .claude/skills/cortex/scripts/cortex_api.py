@@ -5,10 +5,31 @@ Cortex API - Interface pour que les autres skills puissent lire/écrire dans la 
 
 import json
 import os
+import sys
+import tempfile
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, List, Optional, Any
-import fcntl
+
+# Optional cross-platform file locking
+try:
+    import fcntl  # POSIX
+    _HAS_FCNTL = True
+except Exception:
+    fcntl = None
+    _HAS_FCNTL = False
+
+# Optional centralized config
+try:
+    SKILLS_DIR = Path(__file__).resolve().parents[2]
+    sys.path.insert(0, str(SKILLS_DIR))
+    from config import EvolveSkillConfig as _EvolveSkillConfig  # type: ignore
+except Exception:
+    _EvolveSkillConfig = None  # Fallback to defaults
+
+# Configurable limits with sane defaults
+MAX_EVENTS = getattr(_EvolveSkillConfig, "MAX_EVENTS", 1000)
+LOG_SIZE_MB = getattr(_EvolveSkillConfig, "LOG_SIZE_MB", 10)
 
 class CortexMemory:
     """Interface principale pour accéder à la mémoire Cortex"""
@@ -32,7 +53,7 @@ class CortexMemory:
             self.handoff_file.touch()
 
     def _init_status_file(self):
-        """Initialiser le fichier de statut"""
+        """Initialiser le fichier de statut (écriture atomique)"""
         initial_status = {
             "timestamp": datetime.now().strftime("%Y-%m-%d-%H:%M"),
             "agent": "Cortex System",
@@ -44,32 +65,32 @@ class CortexMemory:
             },
             "custom_events": []
         }
-        with open(self.status_file, 'w') as f:
-            json.dump(initial_status, f, indent=2)
+        self._atomic_write_json(self.status_file, initial_status)
 
     def _load_status(self) -> Dict[str, Any]:
-        """Charger le fichier de statut avec lock"""
+        """Charger le fichier de statut avec lock (si disponible)"""
         if not self.status_file.exists():
             self._init_status_file()
 
         with open(self.status_file, 'r') as f:
-            # Lock pour lecture
-            fcntl.flock(f.fileno(), fcntl.LOCK_SH)
+            if _HAS_FCNTL:
+                try:
+                    fcntl.flock(f.fileno(), fcntl.LOCK_SH)
+                except Exception:
+                    pass
             try:
                 data = json.load(f)
             finally:
-                fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+                if _HAS_FCNTL:
+                    try:
+                        fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+                    except Exception:
+                        pass
             return data
 
     def _save_status(self, status: Dict[str, Any]):
-        """Sauvegarder le fichier de statut avec lock"""
-        with open(self.status_file, 'w') as f:
-            # Lock pour écriture
-            fcntl.flock(f.fileno(), fcntl.LOCK_EX)
-            try:
-                json.dump(status, f, indent=2)
-            finally:
-                fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+        """Sauvegarder le fichier de statut (écriture atomique)"""
+        self._atomic_write_json(self.status_file, status)
 
     def add_event(self, event_type: str, description: str, metadata: Optional[Dict] = None):
         """
@@ -94,9 +115,9 @@ class CortexMemory:
 
         status["custom_events"].append(event)
 
-        # Limiter à 1000 événements max (keep last 1000)
-        if len(status["custom_events"]) > 1000:
-            status["custom_events"] = status["custom_events"][-1000:]
+        # Limiter le nombre d'événements (keep last MAX_EVENTS)
+        if len(status["custom_events"]) > MAX_EVENTS:
+            status["custom_events"] = status["custom_events"][-MAX_EVENTS:]
 
         self._save_status(status)
 
@@ -290,13 +311,75 @@ class CortexMemory:
             content: Contenu à ajouter (markdown)
         """
         with open(self.log_file, 'a') as f:
-            # Lock pour écriture
-            fcntl.flock(f.fileno(), fcntl.LOCK_EX)
+            if _HAS_FCNTL:
+                try:
+                    fcntl.flock(f.fileno(), fcntl.LOCK_EX)
+                except Exception:
+                    pass
             try:
                 f.write("\n" + content + "\n")
+                f.flush()
+                try:
+                    os.fsync(f.fileno())
+                except Exception:
+                    pass
             finally:
-                fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+                if _HAS_FCNTL:
+                    try:
+                        fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+                    except Exception:
+                        pass
 
+        # Ensure log file doesn't grow without bound
+        self._truncate_log_if_needed()
+
+    def _atomic_write_json(self, path: Path, data: Dict[str, Any]):
+        """Écrit un JSON de manière atomique (tempfile + os.replace)"""
+        path = Path(path)
+        tmp_fd, tmp_path = tempfile.mkstemp(prefix=path.name, dir=str(path.parent))
+        try:
+            with os.fdopen(tmp_fd, 'w') as tmp_file:
+                json.dump(data, tmp_file, indent=2)
+                tmp_file.flush()
+                os.fsync(tmp_file.fileno())
+            os.replace(tmp_path, path)
+        finally:
+            # If replace failed, ensure temp file is removed
+            if os.path.exists(tmp_path):
+                try:
+                    os.remove(tmp_path)
+                except Exception:
+                    pass
+
+    def _truncate_log_if_needed(self):
+        """Truncate the log file to the last LOG_SIZE_MB if it grows too large."""
+        try:
+            if not self.log_file.exists():
+                return
+            max_bytes = int(LOG_SIZE_MB) * 1024 * 1024
+            current_size = self.log_file.stat().st_size
+            if current_size <= max_bytes:
+                return
+            # Keep only the last max_bytes
+            tmp_fd, tmp_path = tempfile.mkstemp(prefix=self.log_file.name, dir=str(self.log_file.parent))
+            try:
+                with open(self.log_file, 'rb') as src:
+                    src.seek(-max_bytes, os.SEEK_END)
+                    data = src.read()
+                with os.fdopen(tmp_fd, 'wb') as tmp_file:
+                    tmp_file.write(data)
+                    tmp_file.flush()
+                    os.fsync(tmp_file.fileno())
+                os.replace(tmp_path, self.log_file)
+            finally:
+                if os.path.exists(tmp_path):
+                    try:
+                        os.remove(tmp_path)
+                    except Exception:
+                        pass
+        except Exception:
+            # Best-effort; do not fail on truncation issues
+            pass
 
 # Fonctions globales pour faciliter l'utilisation
 

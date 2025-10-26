@@ -85,7 +85,7 @@ Your assistant can now:
 
 ```bash
 # Analyze patterns
-python .claude/skills/synapse/scripts/nexus_analyzer.py
+python .claude/skills/synapse/scripts/synapse_analyzer.py
 
 # Auto-generate skills from patterns
 python .claude/skills/synapse/scripts/auto_skill_generator.py
@@ -142,7 +142,7 @@ chmod +x /path/to/your/project/.git/hooks/post-commit
 python3 --version
 
 # Run scripts with full path
-python3 /full/path/to/.claude/skills/synapse/scripts/nexus_analyzer.py
+python3 /full/path/to/.claude/skills/synapse/scripts/synapse_analyzer.py
 ```
 
 ### Permission denied on scripts?

@@ -191,14 +191,14 @@ Get direct access to Cortex memory instance for advanced usage.
 **Example:**
 
 ```python
-soul = get_cortex_instance()
+cortex = get_cortex_instance()
 
 # Direct file path access
-print(f"Log file: {soul.log_file}")
-print(f"Status file: {soul.status_file}")
+print(f"Log file: {cortex.log_file}")
+print(f"Status file: {cortex.status_file}")
 
 # Force save current state
-soul._save_status()
+cortex._save_status()
 ```
 
 **Note:** Most use cases should use the convenience functions above rather than direct instance access.
@@ -261,7 +261,7 @@ Cortex stores data in your project root:
 - **`.cortex_log.md`** - Human-readable session history
 - **`.cortex_status.json`** - Machine-readable current state
 - **`.cortex_handoff.md`** - Next session quick start
-- **`.soul_lock`** - Temporary lock file (auto-cleaned)
+- **`.cortex_lock`** - Temporary lock file (auto-cleaned)
 
 All files are gitignored by default (see `.gitignore`).
 
@@ -310,8 +310,8 @@ import sys
 from pathlib import Path
 
 # Add Cortex to path
-soul_path = Path(".claude/skills/cortex/scripts")
-sys.path.insert(0, str(soul_path))
+cortex_path = Path(".claude/skills/cortex/scripts")
+sys.path.insert(0, str(cortex_path))
 
 from cortex_api import add_cortex_event, get_cortex_memory
 

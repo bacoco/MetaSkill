@@ -25,10 +25,10 @@ Do not split them into separate packages. The single EvolveSkill.zip contains al
 ### Building Distribution
 ```bash
 # Package EvolveSkill (creates dist/EvolveSkill-v{VERSION}.zip)
-./package_metaskill.sh [VERSION]
+./package_evolveskill.sh [VERSION]
 
-# Default version is 1.0.0
-./package_metaskill.sh
+# Default version is 2.0.0
+./package_evolveskill.sh
 ```
 
 This creates a single universal zip containing:
@@ -67,7 +67,7 @@ python3 .claude/skills/cortex/scripts/handoff_generator.py
 **Synapse:**
 ```bash
 # Analyze patterns (creates Synapse_RECOMMENDATIONS.md)
-python .claude/skills/synapse/scripts/nexus_analyzer.py
+python .claude/skills/synapse/scripts/synapse_analyzer.py
 
 # Auto-generate skills from patterns
 python .claude/skills/synapse/scripts/auto_skill_generator.py
@@ -90,10 +90,10 @@ python .claude/skills/forge/scripts/package_skill.py <path/to/skill> [output-dir
 ### Directory Structure
 ```
 .claude/skills/
-├── soul/
+├── cortex/
 │   ├── SKILL.md                    # Main skill documentation
 │   ├── scripts/
-│   │   ├── cortex_api.py             # Python API for inter-skill communication
+│   │   ├── cortex_api.py           # Python API for inter-skill communication
 │   │   ├── trace_session.py        # Updates .cortex_log.md and .cortex_status.json
 │   │   ├── handoff_generator.py    # Creates .cortex_handoff.md
 │   │   └── install.sh              # Sets up git hooks
@@ -101,20 +101,20 @@ python .claude/skills/forge/scripts/package_skill.py <path/to/skill> [output-dir
 │       ├── API_REFERENCE.md        # Complete API documentation
 │       ├── WORKFLOWS.md            # Common usage patterns
 │       └── MULTI_LLM.md            # Non-Claude LLM integration
-├── nexus/
+├── synapse/
 │   ├── SKILL.md
 │   ├── scripts/
-│   │   ├── nexus_analyzer.py       # Analyzes Cortex data for patterns
+│   │   ├── synapse_analyzer.py     # Analyzes Cortex data for patterns
 │   │   ├── auto_skill_generator.py # Auto-generates skills from patterns
 │   │   ├── prd_analyzer.py         # Extracts patterns from PRD files
 │   │   ├── pattern_detector.py     # Core pattern detection logic
-│   │   └── soul_integration.py     # Cortex API integration
+│   │   └── cortex_integration.py   # Cortex API integration
 │   └── references/
 │       ├── EXAMPLES.md             # Real-world examples
 │       ├── CONFIGURATION.md        # Config reference
 │       ├── ADVANCED.md             # Pattern merging, customization
 │       └── OUTPUT_FORMAT.md        # Synapse_RECOMMENDATIONS.md format
-└── Forge/
+└── forge/
     ├── SKILL.md
     └── scripts/
         ├── init_skill.py           # Generate skill template
@@ -281,7 +281,7 @@ for i in {1..6}; do
 done
 
 # 5. Test Synapse detection
-python /path/to/EvolveSkill/.claude/skills/synapse/scripts/nexus_analyzer.py
+python /path/to/EvolveSkill/.claude/skills/synapse/scripts/synapse_analyzer.py
 cat Synapse_RECOMMENDATIONS.md  # Should show pattern recommendation
 
 # 6. Test auto-generation

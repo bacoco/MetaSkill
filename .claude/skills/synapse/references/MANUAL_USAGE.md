@@ -40,7 +40,7 @@ python .claude/skills/synapse/scripts/auto_skill_generator.py \
 | `--auto-threshold` | str | high | Auto-generate if priority >= this (low/medium/high/critical) |
 | `--dry-run` | flag | false | Analyze only, don't create skills |
 | `--output` | str | Synapse_RECOMMENDATIONS.md | Output file path |
-| `--config` | str | .nexus_config.json | Config file path |
+| `--config` | str | .synapse_config.json | Config file path |
 | `--verbose` | flag | false | Detailed output |
 | `--quiet` | flag | false | Minimal output |
 
@@ -164,18 +164,18 @@ Generates recommendations without auto-creating skills.
 
 ```bash
 # Analyze and create Synapse_RECOMMENDATIONS.md
-python .claude/skills/synapse/scripts/nexus_analyzer.py
+python .claude/skills/synapse/scripts/synapse_analyzer.py
 ```
 
 ### Command-Line Options
 
 ```bash
-python .claude/skills/synapse/scripts/nexus_analyzer.py \
+python .claude/skills/synapse/scripts/synapse_analyzer.py \
   --threshold 3 \
   --days 14 \
   --output MY_RECOMMENDATIONS.md \
   --format markdown \
-  --config .nexus_config.json
+--config .synapse_config.json
 ```
 
 ### Options Reference
@@ -186,8 +186,8 @@ python .claude/skills/synapse/scripts/nexus_analyzer.py \
 | `--days` | int | 7 | Analysis window in days |
 | `--output` | str | Synapse_RECOMMENDATIONS.md | Output file path |
 | `--format` | str | markdown | Output format (markdown/json) |
-| `--config` | str | .nexus_config.json | Config file path |
-| `--soul-only` | flag | false | Only analyze Cortex patterns |
+| `--config` | str | .synapse_config.json | Config file path |
+| `--cortex-only` | flag | false | Only analyze Cortex patterns |
 | `--prd-only` | flag | false | Only analyze PRD files |
 | `--tasks-only` | flag | false | Only analyze task lists |
 
@@ -197,34 +197,34 @@ python .claude/skills/synapse/scripts/nexus_analyzer.py \
 
 ```bash
 # Generate machine-readable JSON
-python .claude/skills/synapse/scripts/nexus_analyzer.py --format json --output recs.json
+python .claude/skills/synapse/scripts/synapse_analyzer.py --format json --output recs.json
 ```
 
 #### Cortex Analysis Only
 
 ```bash
 # Only analyze Cortex memory patterns
-python .claude/skills/synapse/scripts/nexus_analyzer.py --soul-only
+python .claude/skills/synapse/scripts/synapse_analyzer.py --cortex-only
 ```
 
 #### PRD Analysis Only
 
 ```bash
 # Only analyze PRD files
-python .claude/skills/synapse/scripts/nexus_analyzer.py --prd-only
+python .claude/skills/synapse/scripts/synapse_analyzer.py --prd-only
 ```
 
 #### Multiple Analysis Runs
 
 ```bash
 # Short-term patterns (last 3 days, lower threshold)
-python .claude/skills/synapse/scripts/nexus_analyzer.py \
+python .claude/skills/synapse/scripts/synapse_analyzer.py \
   --days 3 \
   --threshold 2 \
   --output Synapse_SHORT_TERM.md
 
 # Long-term patterns (last 30 days, higher threshold)
-python .claude/skills/synapse/scripts/nexus_analyzer.py \
+python .claude/skills/synapse/scripts/synapse_analyzer.py \
   --days 30 \
   --threshold 10 \
   --output Synapse_LONG_TERM.md
@@ -240,7 +240,7 @@ Wrapper for automatic periodic execution.
 
 ```bash
 # Run monitoring (calls auto_skill_generator.py)
-/path/to/.claude/skills/scripts/nexus_auto_watch.sh
+/path/to/.claude/skills/synapse/scripts/synapse_auto_watch.sh
 ```
 
 ### Cron Setup
@@ -252,16 +252,16 @@ crontab -e
 # Add one of these lines:
 
 # Every 30 minutes
-*/30 * * * * /path/to/.claude/skills/scripts/nexus_auto_watch.sh
+*/30 * * * * /path/to/.claude/skills/synapse/scripts/synapse_auto_watch.sh
 
 # Every hour
-0 * * * * /path/to/.claude/skills/scripts/nexus_auto_watch.sh
+0 * * * * /path/to/.claude/skills/synapse/scripts/synapse_auto_watch.sh
 
 # Twice daily (9am and 5pm)
-0 9,17 * * * /path/to/.claude/skills/scripts/nexus_auto_watch.sh
+0 9,17 * * * /path/to/.claude/skills/synapse/scripts/synapse_auto_watch.sh
 
 # Daily at midnight
-0 0 * * * /path/to/.claude/skills/scripts/nexus_auto_watch.sh
+0 0 * * * /path/to/.claude/skills/synapse/scripts/synapse_auto_watch.sh
 ```
 
 ### Git Hook Setup
@@ -271,7 +271,7 @@ crontab -e
 cat >> .git/hooks/post-commit << 'EOF'
 #!/bin/bash
 # Run Synapse in background after commits
-/path/to/.claude/skills/scripts/nexus_auto_watch.sh &
+/path/to/.claude/skills/synapse/scripts/synapse_auto_watch.sh &
 EOF
 
 chmod +x .git/hooks/post-commit
@@ -281,7 +281,7 @@ chmod +x .git/hooks/post-commit
 
 ## Configuration File
 
-Create `.nexus_config.json` for persistent settings:
+Create `.synapse_config.json` for persistent settings:
 
 ```json
 {
@@ -291,7 +291,7 @@ Create `.nexus_config.json` for persistent settings:
     "auto_threshold": "high"
   },
   "sources": {
-    "soul_memory": true,
+    "cortex_memory": true,
     "prd_files": true,
     "task_lists": true,
     "code_analysis": false
@@ -304,7 +304,7 @@ Create `.nexus_config.json` for persistent settings:
   "auto_generation": {
     "enabled": true,
     "max_skills_per_run": 5,
-    "log_to_soul": true
+    "log_to_cortex": true
   }
 }
 ```
@@ -353,20 +353,20 @@ fi
 
 ## Logs
 
-Synapse logs to `.nexus_auto.log`:
+Synapse logs to `.synapse_auto.log`:
 
 ```bash
 # View recent logs
-tail -n 50 .nexus_auto.log
+tail -n 50 .synapse_auto.log
 
 # Watch logs in real-time
-tail -f .nexus_auto.log
+tail -f .synapse_auto.log
 
 # Search for errors
-grep ERROR .nexus_auto.log
+grep ERROR .synapse_auto.log
 
 # Find generated skills
-grep "created successfully" .nexus_auto.log
+grep "created successfully" .synapse_auto.log
 ```
 
 ---
@@ -421,10 +421,10 @@ import sys
 from pathlib import Path
 
 # Add Synapse to path
-nexus_scripts = Path(".claude/skills/synapse/scripts")
-sys.path.insert(0, str(nexus_scripts))
+synapse_scripts = Path(".claude/skills/synapse/scripts")
+sys.path.insert(0, str(synapse_scripts))
 
-from nexus_analyzer import SynapseUnifiedAnalyzer
+from synapse_analyzer import SynapseUnifiedAnalyzer
 from auto_skill_generator import AutoSkillGenerator
 
 # Custom analyzer
@@ -444,7 +444,7 @@ if len(api_recs) > 0:
 ### Integration with CI/CD
 
 ```yaml
-# .github/workflows/nexus.yml
+# .github/workflows/synapse.yml
 name: Synapse Analysis
 
 on:
@@ -464,7 +464,7 @@ jobs:
       - name: Upload recommendations
         uses: actions/upload-artifact@v2
         with:
-          name: nexus-recommendations
+name: synapse-recommendations
           path: Synapse_RECOMMENDATIONS.md
 ```
 

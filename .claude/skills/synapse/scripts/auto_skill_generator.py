@@ -20,15 +20,29 @@ from typing import List, Dict
 cortex_scripts_path = Path(__file__).parent.parent.parent / "cortex" / "scripts"
 sys.path.insert(0, str(cortex_scripts_path))
 
+# Robust import of Cortex API with fallback to file-based import
+Cortex_AVAILABLE = False
 try:
     from cortex_api import add_cortex_event, get_pattern_analysis
     Cortex_AVAILABLE = True
 except ImportError:
-    Cortex_AVAILABLE = False
+    try:
+        import importlib.util
+        cortex_api_path = cortex_scripts_path / "cortex_api.py"
+        if cortex_api_path.exists():
+            spec = importlib.util.spec_from_file_location("cortex_api", str(cortex_api_path))
+            module = importlib.util.module_from_spec(spec)
+            assert spec and spec.loader
+            spec.loader.exec_module(module)
+            add_cortex_event = module.add_cortex_event
+            get_pattern_analysis = module.get_pattern_analysis
+            Cortex_AVAILABLE = True
+    except Exception:
+        Cortex_AVAILABLE = False
 
 # Import Synapse analyzer
 try:
-    from nexus_analyzer import SynapseUnifiedAnalyzer
+    from synapse_analyzer import SynapseUnifiedAnalyzer
     Synapse_AVAILABLE = True
 except ImportError:
     Synapse_AVAILABLE = False
@@ -229,9 +243,12 @@ if __name__ == "__main__":
     print(json.dumps(result, indent=2))
 """
 
-    def run_auto_generation(self) -> Dict:
+    def run_auto_generation(self, dry_run: bool = False) -> Dict:
         """
         Exécute la génération automatique de skills
+
+        Args:
+            dry_run: Si vrai, ne génère rien et affiche seulement ce qui serait fait
 
         Returns:
             Dict avec résultats (skills générés, skippés, erreurs)
@@ -245,7 +262,11 @@ if __name__ == "__main__":
 
         print(f"🤖 Synapse Auto Skill Generator")
         print(f"   Threshold: {self.threshold} occurrences in {self.days} days")
-        print(f"   Auto-generate: {self.auto_generate_threshold}+ priority\n")
+        print(f"   Auto-generate: {self.auto_generate_threshold}+ priority")
+        if dry_run:
+            print("   Mode: DRY RUN (no files will be created)\n")
+        else:
+            print("\n")
 
         # Analyser avec Synapse
         analyzer = SynapseUnifiedAnalyzer(
@@ -290,10 +311,15 @@ if __name__ == "__main__":
             print(f"🔧 Generating {skill_name} (priority: {priority})...")
 
             try:
-                success = self.generate_skill_with_creator(rec)
+                if dry_run:
+                    print(f"   🧪 DRY RUN: would generate {skill_name}\n")
+                    success = True
+                else:
+                    success = self.generate_skill_with_creator(rec)
 
                 if success:
-                    print(f"   ✅ {skill_name} created successfully\n")
+                    if not dry_run:
+                        print(f"   ✅ {skill_name} created successfully\n")
                     generated.append({
                         "skill": skill_name,
                         "priority": priority,
@@ -301,7 +327,7 @@ if __name__ == "__main__":
                     })
 
                     # Enregistrer dans Cortex
-                    if Cortex_AVAILABLE:
+                    if Cortex_AVAILABLE and not dry_run:
                         add_cortex_event(
                             "skill_auto_generated",
                             f"Synapse auto-generated skill: {skill_name}",
@@ -368,9 +394,8 @@ def main():
 
     if args.dry_run:
         print("🔍 DRY RUN MODE - No skills will be generated\n")
-        # TODO: Implémenter dry-run avec analyse seulement
 
-    result = generator.run_auto_generation()
+    result = generator.run_auto_generation(dry_run=args.dry_run)
 
     # Return code
     if result.get("error"):

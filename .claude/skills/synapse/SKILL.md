@@ -1,5 +1,5 @@
 ---
-name: nexus
+name: synapse
 description: Pattern detection and automatic skill recommendation system. Activates when analyzing Cortex memory files, detecting recurring work patterns, or determining if new skills are needed. Analyzes .cortex_log.md, PRD files, and task lists to identify patterns (API calls, testing, deployment, etc.) appearing 5+ times. Generates Synapse_RECOMMENDATIONS.md with prioritized skill suggestions. Use when optimizing workflows or identifying automation opportunities.
 allowed-tools: Read, Write, Bash, Grep, Glob
 ---
@@ -123,7 +123,7 @@ Skills with HIGH or CRITICAL priority will be generated automatically.
 Generate recommendations without auto-creating skills:
 
 ```bash
-python .claude/skills/synapse/scripts/nexus_analyzer.py
+python .claude/skills/synapse/scripts/synapse_analyzer.py
 ```
 
 This creates `Synapse_RECOMMENDATIONS.md` for manual review.
@@ -134,7 +134,7 @@ Add to crontab for automatic periodic checks:
 
 ```bash
 # Every 30 minutes
-*/30 * * * * /path/to/.claude/skills/scripts/nexus_auto_watch.sh
+*/30 * * * * /path/to/.claude/skills/synapse/scripts/synapse_auto_watch.sh
 ```
 
 Or use as git hook (see [INSTALLATION.md](references/INSTALLATION.md)).
@@ -190,7 +190,7 @@ See [ADVANCED.md](references/ADVANCED.md) for detailed documentation.
 
 ## Configuration
 
-Create `.nexus_config.json` for custom settings:
+Create `.synapse_config.json` for custom settings:
 
 ```json
 {
@@ -199,7 +199,7 @@ Create `.nexus_config.json` for custom settings:
     "window_days": 7
   },
   "sources": {
-    "soul_memory": true,
+    "cortex_memory": true,
     "prd_files": true,
     "task_lists": true
   }

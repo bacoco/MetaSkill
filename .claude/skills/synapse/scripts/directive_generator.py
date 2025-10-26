@@ -112,7 +112,7 @@ class DirectiveGenerator:
         self,
         recommendation: Dict,
         patterns: List[Dict],
-        soul_examples: List[str] = None
+        cortex_examples: List[str] = None
     ) -> str:
         """Generate a skill creation directive from pattern analysis"""
 

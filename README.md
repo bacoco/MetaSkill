@@ -34,6 +34,13 @@ Cortex tracks improvements → Loop continues
 System gets better forever
 ```
 
+### 🚀 New in v2.0.0
+- **Centralized Configuration**: Unified settings across all components
+- **Test Suite**: Comprehensive tests for all modules
+- **Memory Optimization**: Efficient handling of large projects
+- **Enhanced Validation**: Robust input validation and error handling
+- **Makefile**: Convenient commands for common operations
+
 **This is why all three are packaged together.** One without the others is incomplete.
 
 ---
@@ -192,6 +199,8 @@ System gets better forever
 
 ## Installation (Works With Any AI Assistant)
 
+See MULTI_LLM_COMPAT.md for assistant-specific tips.
+
 **10 seconds. Works with Claude Code, GPT, Gemini, Cursor, Aider, any AI that reads markdown.**
 
 ### Say this to your AI:
@@ -206,6 +215,13 @@ That's it. Your AI will:
 - Be ready with memory, patterns, and skill generation ✓
 
 Start coding. The system activates automatically.
+
+Quick commands:
+- make install — installs hooks
+- make trace — force a trace
+- make analyze THRESHOLD=5 DAYS=7 — run Synapse analysis
+- make auto-generate THRESHOLD=5 DAYS=7 — auto-create skills
+- make package — build the distribution
 
 ---
 

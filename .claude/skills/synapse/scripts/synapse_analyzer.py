@@ -8,18 +8,38 @@ import sys
 from pathlib import Path
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional
+import os
 import json
 
 # Add Cortex to path
 cortex_scripts_path = Path(__file__).parent.parent.parent / "cortex" / "scripts"
 sys.path.insert(0, str(cortex_scripts_path))
 
+# Robust import of Cortex API with fallback to file-based import
+Cortex_AVAILABLE = False
 try:
     from cortex_api import get_pattern_analysis, get_cortex_memory, get_current_context
     Cortex_AVAILABLE = True
-except ImportError:
-    Cortex_AVAILABLE = False
-    print("⚠️  Cortex not available. Limited analysis mode.")
+except ImportError as e:
+    try:
+        import importlib.util
+        cortex_api_path = cortex_scripts_path / "cortex_api.py"
+        if cortex_api_path.exists():
+            spec = importlib.util.spec_from_file_location("cortex_api", str(cortex_api_path))
+            module = importlib.util.module_from_spec(spec)
+            assert spec and spec.loader
+            spec.loader.exec_module(module)
+            # Promote needed functions to this module's globals
+            get_pattern_analysis = module.get_pattern_analysis
+            get_cortex_memory = module.get_cortex_memory
+            get_current_context = module.get_current_context
+            Cortex_AVAILABLE = True
+    except Exception as ex:
+        # Optional verbose: set SYNAPSE_DEBUG=1 to see import errors
+        if os.environ.get("SYNAPSE_DEBUG"):
+            print(f"Cortex import error: {ex}")
+        Cortex_AVAILABLE = False
+        print("⚠️  Cortex not available. Limited analysis mode.")
 
 # Import PRD analyzer
 try:

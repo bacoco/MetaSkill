@@ -404,7 +404,7 @@ from cortex_api import *
 
 ```bash
 # Remove stale lock (only if no Cortex operations running)
-rm -f .soul_lock
+rm -f .cortex_lock
 ```
 
 ---

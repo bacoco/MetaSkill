@@ -49,7 +49,7 @@ MERGED:
 
 ```python
 # Pattern appears in Cortex
-soul_pattern = {
+cortex_pattern = {
     "type": "data_processing",
     "count": 10,
     "frequency": 1.4,  # per day
@@ -68,7 +68,7 @@ merged = {
     "type": "data_processing",
     "source": "Cortex + PRD",
     "priority": "high",  # Escalated from medium
-    "soul_frequency": 1.4,
+    "cortex_frequency": 1.4,
     "prd_tasks": 6,
     "reason": "Pattern confirmed in both usage and requirements"
 }
@@ -273,17 +273,17 @@ Customize generated skill structure.
 
 ## Integration with Cortex
 
-{soul_api_code}
+{cortex_api_code}
 ```
 
 ### Create Custom Template
 
 ```bash
 # Create template directory
-mkdir -p .nexus_templates/
+mkdir -p .synapse_templates/
 
 # Create custom template
-cat > .nexus_templates/my_template.md << 'EOF'
+cat > .synapse_templates/my_template.md << 'EOF'
 ---
 name: {skill_name}
 description: {description}
@@ -313,7 +313,7 @@ python auto_skill_generator.py --template my_template
 ### GitHub Actions
 
 ```yaml
-# .github/workflows/nexus.yml
+# .github/workflows/synapse.yml
 name: Synapse Monitoring
 
 on:
@@ -332,15 +332,15 @@ jobs:
         run: |
           python .claude/skills/synapse/scripts/auto_skill_generator.py \
             --dry-run \
-            --output nexus-report.md
+--output synapse-report.md
 
       - name: Create Issue if High Priority Found
         run: |
-          if grep -q "🔴 CRITICAL" nexus-report.md; then
+if grep -q "🔴 CRITICAL" synapse-report.md; then
             gh issue create \
               --title "Synapse: Critical skill recommendation" \
-              --body-file nexus-report.md \
-              --label "nexus,auto-generated"
+--body-file synapse-report.md \
+--label "synapse,auto-generated"
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -406,7 +406,7 @@ for rec in recommendations:
             summary=f"Implement {rec['skill_name']} skill",
             description=rec["reason"],
             issuetype={"name": "Task"},
-            labels=["nexus", "auto-generated", rec["priority"]]
+labels=["synapse", "auto-generated", rec["priority"]]
         )
         print(f"Created: {issue.key}")
 ```
@@ -424,7 +424,7 @@ import pickle
 from pathlib import Path
 from datetime import datetime, timedelta
 
-CACHE_FILE = ".nexus_cache.pkl"
+CACHE_FILE = ".synapse_cache.pkl"
 CACHE_TTL_HOURS = 1
 
 def get_cached_analysis():
@@ -473,13 +473,13 @@ for project in ~/workspace/*/; do
     cd "$project"
 
     if [ -d ".claude/skills/cortex" ]; then
-        python .claude/skills/synapse/scripts/nexus_analyzer.py \
-            --output "nexus_$(basename $project).md"
+python .claude/skills/synapse/scripts/synapse_analyzer.py \
+            --output "synapse_$(basename $project).md"
     fi
 done
 
 # Merge recommendations
-python merge_nexus_reports.py ~/workspace/*/nexus_*.md
+python merge_synapse_reports.py ~/workspace/*/synapse_*.md
 ```
 
 ---
@@ -506,16 +506,16 @@ Synapse_DEBUG=1 python auto_skill_generator.py
 ```
 
 Creates debug files:
-- `.nexus_debug_events.json` - All Cortex events
-- `.nexus_debug_patterns.json` - Detected patterns
-- `.nexus_debug_merge.json` - Merging decisions
+- `.synapse_debug_events.json` - All Cortex events
+- `.synapse_debug_patterns.json` - Detected patterns
+- `.synapse_debug_merge.json` - Merging decisions
 
 ### Testing Pattern Detection
 
 ```python
 #!/usr/bin/env python3
 """Test custom pattern matching"""
-from nexus_analyzer import SynapseUnifiedAnalyzer
+from synapse_analyzer import SynapseUnifiedAnalyzer
 
 analyzer = SynapseUnifiedAnalyzer(threshold=1)  # Lower threshold for testing
 

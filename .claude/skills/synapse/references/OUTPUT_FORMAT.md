@@ -342,7 +342,7 @@ Complete specification for `Synapse_RECOMMENDATIONS.md`.
 Synapse can also output JSON for programmatic consumption:
 
 ```bash
-python .claude/skills/synapse/scripts/nexus_analyzer.py --format json
+python .claude/skills/synapse/scripts/synapse_analyzer.py --format json
 ```
 
 ```json
@@ -364,7 +364,7 @@ python .claude/skills/synapse/scripts/nexus_analyzer.py --format json
       "skill_name": "api-optimizer",
       "priority": "critical",
       "pattern_type": "api_call",
-      "source": "soul_patterns",
+"source": "cortex_patterns",
       "frequency": 3.4,
       "count": 24,
       "reason": "Detected 24 API operations in 7 days",

@@ -7,11 +7,20 @@ Enhanced with monitoring and event tracking.
 
 import os
 import json
+import tempfile
 import subprocess
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
 import sys
+
+# Optional cross-platform file locking
+try:
+    import fcntl  # POSIX
+    _HAS_FCNTL = True
+except Exception:
+    fcntl = None
+    _HAS_FCNTL = False
 
 # Import Cortex API
 try:
@@ -34,6 +43,63 @@ class CortexTracer:
         self.agent_log = self.repo_path / ".cortex_log.md"
         self.agent_status = self.repo_path / ".cortex_status.json"
         self.agent_handoff = self.repo_path / ".cortex_handoff.md"
+
+    def _append_with_lock(self, path: Path, content: str):
+        """Append text to a file with optional advisory locking."""
+        path = Path(path)
+        with open(path, 'a', encoding='utf-8') as f:
+            if _HAS_FCNTL and fcntl:
+                try:
+                    fcntl.flock(f.fileno(), fcntl.LOCK_EX)
+                except Exception:
+                    pass
+            try:
+                f.write(content)
+                f.flush()
+                try:
+                    os.fsync(f.fileno())
+                except Exception:
+                    pass
+            finally:
+                if _HAS_FCNTL and fcntl:
+                    try:
+                        fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+                    except Exception:
+                        pass
+
+    def _atomic_write_json(self, path: Path, data: Dict):
+        """Write JSON atomically using tempfile + replace."""
+        path = Path(path)
+        tmp_fd, tmp_path = tempfile.mkstemp(prefix=path.name, dir=str(path.parent))
+        try:
+            with os.fdopen(tmp_fd, 'w', encoding='utf-8') as tmp_file:
+                json.dump(data, tmp_file, indent=2, ensure_ascii=False)
+                tmp_file.flush()
+                os.fsync(tmp_file.fileno())
+            os.replace(tmp_path, path)
+        finally:
+            if os.path.exists(tmp_path):
+                try:
+                    os.remove(tmp_path)
+                except Exception:
+                    pass
+
+    def _atomic_write_text(self, path: Path, content: str):
+        """Write text atomically using tempfile + replace."""
+        path = Path(path)
+        tmp_fd, tmp_path = tempfile.mkstemp(prefix=path.name, dir=str(path.parent))
+        try:
+            with os.fdopen(tmp_fd, 'w', encoding='utf-8') as tmp_file:
+                tmp_file.write(content)
+                tmp_file.flush()
+                os.fsync(tmp_file.fileno())
+            os.replace(tmp_path, path)
+        finally:
+            if os.path.exists(tmp_path):
+                try:
+                    os.remove(tmp_path)
+                except Exception:
+                    pass
         
     def run_git_command(self, cmd: List[str]) -> Optional[str]:
         """Run git command safely with error handling."""
@@ -53,19 +119,22 @@ class CortexTracer:
     
     def analyze_git_changes(self) -> Dict:
         """Analyze git repository changes."""
-        # Get current status
-        status_output = self.run_git_command(["status", "--porcelain"])
-        if not status_output:
+        # Verify we're inside a git repository
+        inside = self.run_git_command(["rev-parse", "--is-inside-work-tree"])
+        if inside is None:
             return {"has_git": False, "changes": {}}
-        
+
+        # Get current status (empty output means clean repo)
+        status_output = self.run_git_command(["status", "--porcelain"]) or ""
+
         changes = {"modified": [], "added": [], "deleted": [], "untracked": []}
-        
+
         for line in status_output.split('\n'):
             if not line.strip():
                 continue
             status_code = line[:2]
             filename = line[3:]
-            
+
             if 'M' in status_code:
                 changes["modified"].append(filename)
             elif 'A' in status_code:
@@ -74,14 +143,14 @@ class CortexTracer:
                 changes["deleted"].append(filename)
             elif '?' in status_code:
                 changes["untracked"].append(filename)
-        
+
         # Get recent commits
         commits = []
         log_output = self.run_git_command([
             "log", f"--max-count={RECENT_COMMITS_LIMIT}",
             "--pretty=format:%h|%s|%an|%ad", "--date=short"
         ])
-        
+
         if log_output:
             for line in log_output.split('\n'):
                 if '|' in line:
@@ -93,7 +162,7 @@ class CortexTracer:
                             "author": parts[2],
                             "date": parts[3]
                         })
-        
+
         return {
             "has_git": True,
             "changes": changes,
@@ -295,24 +364,19 @@ class CortexTracer:
             status_json = self.generate_status_json()
             handoff_notes = self.generate_handoff_notes()
 
-            # Save work log (append if exists, create if not)
+            # Save work log (append, create if not exists) with lock
             if self.agent_log.exists():
-                with open(self.agent_log, 'a', encoding='utf-8') as f:
-                    f.write("\n\n" + "="*80 + "\n\n")
-                    f.write(work_log)
+                self._append_with_lock(self.agent_log, "\n\n" + "="*80 + "\n\n" + work_log)
             else:
-                with open(self.agent_log, 'w', encoding='utf-8') as f:
-                    f.write(work_log)
+                self._append_with_lock(self.agent_log, work_log)
             files_created.append(str(self.agent_log))
 
-            # Save status JSON (overwrite)
-            with open(self.agent_status, 'w', encoding='utf-8') as f:
-                json.dump(status_json, f, indent=2, ensure_ascii=False)
+            # Save status JSON (atomic overwrite)
+            self._atomic_write_json(self.agent_status, status_json)
             files_created.append(str(self.agent_status))
 
-            # Save handoff notes (overwrite)
-            with open(self.agent_handoff, 'w', encoding='utf-8') as f:
-                f.write(handoff_notes)
+            # Save handoff notes (atomic overwrite)
+            self._atomic_write_text(self.agent_handoff, handoff_notes)
             files_created.append(str(self.agent_handoff))
 
             # Record session trace event via Cortex API

@@ -5,6 +5,7 @@ Cortex data reader for Synapse pattern detection
 
 import re
 import json
+import os
 import subprocess
 import logging
 from pathlib import Path
@@ -69,11 +70,31 @@ class CortexDataReader:
         sessions = []
 
         try:
-            with open(self.agent_log_path, 'r') as f:
-                content = f.read()
+            content: str
+            try:
+                size = self.agent_log_path.stat().st_size
+            except Exception:
+                size = 0
+
+            max_bytes = self.config.get("analysis", "max_log_parse_bytes", default=2_000_000)
+            sep = "=" * 80
+
+            if size > max_bytes:
+                # Read only the last max_bytes to avoid huge memory usage
+                with open(self.agent_log_path, 'rb') as f:
+                    f.seek(-max_bytes, os.SEEK_END)
+                    data = f.read()
+                content = data.decode('utf-8', errors='replace')
+                # Align to the next full session separator if present
+                idx = content.find(sep)
+                if idx != -1:
+                    content = content[idx:]
+            else:
+                with open(self.agent_log_path, 'r', encoding='utf-8') as f:
+                    content = f.read()
 
             # Split by session separator
-            session_blocks = content.split("=" * 80)
+            session_blocks = content.split(sep)
 
             for block in session_blocks:
                 if not block.strip():

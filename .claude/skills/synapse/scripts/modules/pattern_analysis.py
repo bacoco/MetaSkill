@@ -20,12 +20,12 @@ class PatternDetector:
         self.config = config
         self.logger = logging.getLogger(__name__)
 
-    def analyze_all_patterns(self, soul_data: Dict) -> Dict[str, PatternInfo]:
+    def analyze_all_patterns(self, cortex_data: Dict) -> Dict[str, PatternInfo]:
         """Analyze all patterns in Cortex data"""
         patterns = {}
 
-        sessions = soul_data.get("sessions", [])
-        commits = soul_data.get("git_commits", [])
+        sessions = cortex_data.get("sessions", [])
+        commits = cortex_data.get("git_commits", [])
 
         if not sessions:
             self.logger.warning("No sessions to analyze")
@@ -63,11 +63,18 @@ class PatternDetector:
         # Extract timestamps
         timestamps = []
         for session in sessions:
+            # Validate input type defensively
+            try:
+                from .data_models import SessionData as _SessionData
+                if not isinstance(session, _SessionData):
+                    continue
+            except Exception:
+                pass
             try:
                 # Parse timestamp format: 2025-10-25-12:26
                 dt = datetime.strptime(session.timestamp, "%Y-%m-%d-%H:%M")
                 timestamps.append(dt)
-            except:
+            except Exception:
                 continue
 
         if len(timestamps) < 2:

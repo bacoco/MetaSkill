@@ -112,7 +112,7 @@ Total: 15 testing tasks
 ### Synapse Analysis
 
 ```bash
-python .claude/skills/synapse/scripts/nexus_analyzer.py --prd-only
+python .claude/skills/synapse/scripts/synapse_analyzer.py --prd-only
 ```
 
 **Detected Pattern:**
@@ -383,7 +383,7 @@ Pattern detected but skill already exists.
 .claude/skills/
 ├── api-optimizer/
 ├── test-guardian/
-└── soul/
+└── cortex/
 ```
 
 ### Cortex Events
@@ -466,7 +466,7 @@ Analyze patterns over longer period for strategic planning.
 
 ```bash
 # Analyze last 30 days with higher threshold
-python .claude/skills/synapse/scripts/nexus_analyzer.py \
+python .claude/skills/synapse/scripts/synapse_analyzer.py \
   --days 30 \
   --threshold 15 \
   --output Synapse_LONG_TERM.md
@@ -541,7 +541,7 @@ Complete workflow showing all analysis sources.
 
 ```bash
 # Runs every 30 minutes via cron
-*/30 * * * * /path/to/nexus_auto_watch.sh
+*/30 * * * * /path/to/.claude/skills/synapse/scripts/synapse_auto_watch.sh
 ```
 
 ### 5. Results

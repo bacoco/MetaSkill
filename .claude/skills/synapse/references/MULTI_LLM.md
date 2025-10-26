@@ -28,7 +28,7 @@ No LLM-specific syntax required.
 python .claude/skills/synapse/scripts/auto_skill_generator.py
 
 # Or setup automatic monitoring
-*/30 * * * * /path/to/.claude/skills/scripts/nexus_auto_watch.sh
+*/30 * * * * /path/to/.claude/skills/synapse/scripts/synapse_auto_watch.sh
 ```
 
 **Usage:**
@@ -60,7 +60,7 @@ claude
 
 ```bash
 # 1. Setup Synapse monitoring (same as Claude)
-*/30 * * * * /path/to/.claude/skills/scripts/nexus_auto_watch.sh
+*/30 * * * * /path/to/.claude/skills/synapse/scripts/synapse_auto_watch.sh
 
 # 2. Configure GPT to read recommendations
 cat > ~/.config/gpt/system_prompt.txt << 'EOF'
@@ -90,7 +90,7 @@ Would you like me to create these skills?"
 
 ```bash
 # 1. Run Synapse analysis
-python .claude/skills/synapse/scripts/nexus_analyzer.py
+python .claude/skills/synapse/scripts/synapse_analyzer.py
 
 # 2. Read recommendations
 cat Synapse_RECOMMENDATIONS.md
@@ -119,13 +119,13 @@ gpt
 
 ```bash
 # 1. Setup Synapse monitoring
-*/30 * * * * /path/to/.claude/skills/scripts/nexus_auto_watch.sh
+*/30 * * * * /path/to/.claude/skills/synapse/scripts/synapse_auto_watch.sh
 
 # 2. Configure Gemini startup script
 cat > ~/.gemini/startup.sh << 'EOF'
 #!/bin/bash
 if [ -f "Synapse_RECOMMENDATIONS.md" ]; then
-    echo "📊 Synapse recommendations available. Type 'check nexus' to review."
+echo "📊 Synapse recommendations available. Type 'check synapse' to review."
 fi
 EOF
 ```
@@ -162,7 +162,7 @@ gemini
 
 ```bash
 # 1. Setup Synapse monitoring
-*/30 * * * * /path/to/.claude/skills/scripts/nexus_auto_watch.sh
+*/30 * * * * /path/to/.claude/skills/synapse/scripts/synapse_auto_watch.sh
 
 # 2. Add to workspace settings (.vscode/settings.json)
 {
@@ -193,7 +193,7 @@ Open Cursor → AI will notify if Synapse has recommendations → Create skills 
 
 ```bash
 # 1. Setup Synapse monitoring
-*/30 * * * * /path/to/.claude/skills/scripts/nexus_auto_watch.sh
+*/30 * * * * /path/to/.claude/skills/synapse/scripts/synapse_auto_watch.sh
 
 # 2. Add to .aider.conf.yml
 read:
@@ -307,7 +307,7 @@ your-llm
 
 ```bash
 # 1. Read recommendations
-python .claude/skills/synapse/scripts/nexus_analyzer.py
+python .claude/skills/synapse/scripts/synapse_analyzer.py
 
 # 2. Use skill-creator meta-skill
 your-llm
@@ -343,7 +343,7 @@ if "🔴 CRITICAL" in content or "🟠 HIGH" in content:
 Generate machine-readable format:
 
 ```bash
-python .claude/skills/synapse/scripts/nexus_analyzer.py --format json
+python .claude/skills/synapse/scripts/synapse_analyzer.py --format json
 ```
 
 ```json
@@ -478,5 +478,5 @@ Cursor doesn't load Claude skills
 - [INSTALLATION.md](INSTALLATION.md) - Setup guide
 - [MANUAL_USAGE.md](MANUAL_USAGE.md) - Command-line options
 - [EXAMPLES.md](EXAMPLES.md) - Real-world examples
-- Cortex [MULTI_LLM.md](../../soul/references/MULTI_LLM.md) - Cortex multi-LLM guide
+- Cortex [MULTI_LLM.md](../../cortex/references/MULTI_LLM.md) - Cortex multi-LLM guide
 - Main SKILL.md - Synapse overview

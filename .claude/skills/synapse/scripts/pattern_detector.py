@@ -137,7 +137,7 @@ Examples:
   python pattern_detector.py
 
   # Analyze with custom config
-  python pattern_detector.py --config nexus_config.json
+  python pattern_detector.py --config synapse_config.json
 
   # Specify repository root
   python pattern_detector.py --repo /path/to/repo

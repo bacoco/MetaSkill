@@ -25,6 +25,7 @@ Thumbs.db
 
 # Synapse output
 SYNAPSE_RECOMMENDATIONS.md
+Synapse_RECOMMENDATIONS.md
 .synapse_config.json
 
 # Cortex generated files (project-specific, not in EvolveSkill)

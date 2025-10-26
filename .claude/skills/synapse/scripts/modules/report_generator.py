@@ -24,7 +24,7 @@ class ReportGenerator:
         self,
         patterns: Dict[str, PatternInfo],
         recommendations: List[SkillRecommendation],
-        soul_data: Dict
+        cortex_data: Dict
     ) -> Dict:
         """Generate comprehensive report"""
 
@@ -34,10 +34,10 @@ class ReportGenerator:
                 "analyzer": "Synapse Pattern Detector",
                 "version": "2.0.0"
             },
-            "summary": self._generate_summary(patterns, recommendations, soul_data),
+            "summary": self._generate_summary(patterns, recommendations, cortex_data),
             "patterns": self._format_patterns(patterns),
             "recommendations": self._format_recommendations(recommendations),
-            "trend_analysis": self._generate_trend_analysis(soul_data),
+            "trend_analysis": self._generate_trend_analysis(cortex_data),
             "priority_matrix": self._generate_priority_matrix(recommendations),
             "actionable_insights": self._generate_insights(patterns, recommendations)
         }
@@ -48,10 +48,10 @@ class ReportGenerator:
         self,
         patterns: Dict[str, PatternInfo],
         recommendations: List[SkillRecommendation],
-        soul_data: Dict
+        cortex_data: Dict
     ) -> Dict:
         """Generate executive summary"""
-        sessions = soul_data.get("sessions", [])
+        sessions = cortex_data.get("sessions", [])
 
         return {
             "total_sessions_analyzed": len(sessions),
@@ -107,9 +107,9 @@ class ReportGenerator:
 
         return formatted
 
-    def _generate_trend_analysis(self, soul_data: Dict) -> Dict:
+    def _generate_trend_analysis(self, cortex_data: Dict) -> Dict:
         """Generate trend analysis"""
-        sessions = soul_data.get("sessions", [])
+        sessions = cortex_data.get("sessions", [])
 
         if not sessions:
             return {}

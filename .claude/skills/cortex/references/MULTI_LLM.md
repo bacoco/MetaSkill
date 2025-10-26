@@ -28,7 +28,7 @@ cd .claude/skills/cortex/scripts
 
 **Skill Loading:**
 ```bash
-claude --skills soul,nexus
+claude --skills cortex,synapse
 ```
 
 ### OpenAI GPT (CLI)
@@ -232,8 +232,8 @@ import sys
 from pathlib import Path
 
 # Add Cortex to path
-soul_scripts = Path(".claude/skills/cortex/scripts")
-sys.path.insert(0, str(soul_scripts))
+cortex_scripts = Path(".claude/skills/cortex/scripts")
+sys.path.insert(0, str(cortex_scripts))
 
 from cortex_api import add_cortex_event, get_cortex_memory
 

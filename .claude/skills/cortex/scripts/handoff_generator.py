@@ -32,6 +32,15 @@ class HandoffGenerator:
             "documentation_updated": False,
             "blocking_issues": []
         }
+
+        # Use current Cortex status for git cleanliness if available
+        status = self.load_agent_status()
+        git_clean = (
+            status.get("session_info", {}).get("git_clean")
+            if isinstance(status, dict) else None
+        )
+        if isinstance(git_clean, bool):
+            readiness["git_clean"] = git_clean
         
         # Check for common project files
         project_files = {

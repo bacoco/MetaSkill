@@ -204,8 +204,8 @@ class SynapseRecommendationEngine:
         recommendations = []
 
         # Get Cortex-based recommendations
-        soul_recs = self.pattern_detector.get_skill_recommendations()
-        for rec in soul_recs:
+        cortex_recs = self.pattern_detector.get_skill_recommendations()
+        for rec in cortex_recs:
             rec["source"] = "Cortex patterns"
             recommendations.append(rec)
 
@@ -235,7 +235,7 @@ class SynapseRecommendationEngine:
         self.registry.register_skill_generation(skill_name, pattern_type)
 
 
-def get_soul_patterns(threshold: int = 5, days: int = 7) -> List[Dict]:
+def get_cortex_patterns(threshold: int = 5, days: int = 7) -> List[Dict]:
     """
     Convenience function to get patterns from Cortex
 
