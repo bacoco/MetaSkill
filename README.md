@@ -298,6 +298,7 @@ Each skill has detailed docs:
 - **Cortex**: [SKILL.md](.claude/skills/cortex/SKILL.md) | [API Reference](.claude/skills/cortex/references/API_REFERENCE.md)
 - **Synapse**: [SKILL.md](.claude/skills/synapse/SKILL.md) | [Examples](.claude/skills/synapse/references/EXAMPLES.md)
 - **Forge**: [SKILL.md](.claude/skills/forge/SKILL.md)
+- **MCP Provider**: [SKILL.md](skills/mcp_provider/SKILL.md)
 
 See [INSTALLATION.md](INSTALLATION.md) for detailed setup.
 
