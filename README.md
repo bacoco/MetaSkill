@@ -125,18 +125,18 @@ System gets better forever
 
 ## Installation (Works With Any AI Assistant)
 
-**One command. Works with Claude Code, GPT, Gemini, Cursor, Aider, any AI that reads markdown.**
+**10 seconds. Works with Claude Code, GPT, Gemini, Cursor, Aider, any AI that reads markdown.**
 
-### Copy this to your AI:
+### Say this to your AI:
 
-```bash
-curl -sL https://raw.githubusercontent.com/bacoco/EvolveSkill/main/install.sh | bash
+```
+Install EvolveSkill from https://github.com/bacoco/EvolveSkill
 ```
 
-That's it. Your AI now has:
-- Memory across sessions ✓
-- Pattern detection ✓
-- Auto-generated skills ✓
+That's it. Your AI will:
+- Download and install the skills ✓
+- Set up git hooks automatically ✓
+- Be ready with memory, patterns, and skill generation ✓
 
 Start coding. The system activates automatically.
 
