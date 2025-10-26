@@ -69,6 +69,38 @@ python .claude/skills/nexus/scripts/nexus_analyzer.py
 
 ---
 
+### 🛠️ skill-creator - Official Skill Creation Tool
+
+**Score: 10/10**
+
+Official guide for creating effective skills that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations.
+
+**Key Features:**
+- Complete skill creation workflow (6 steps)
+- Progressive disclosure design patterns
+- Skill validation and packaging
+- Init scripts for quick setup
+- Best practices and templates
+
+**Documentation:**
+- [SKILL.md](.claude/skills/skill-creator/SKILL.md) - Complete creation guide (356 lines)
+- [workflows.md](.claude/skills/skill-creator/references/workflows.md) - Multi-step process patterns
+- [output-patterns.md](.claude/skills/skill-creator/references/output-patterns.md) - Output quality patterns
+
+**Quick Start:**
+```bash
+# Initialize a new skill
+python .claude/skills/skill-creator/scripts/init_skill.py my-skill --path ./output
+
+# Validate a skill
+python .claude/skills/skill-creator/scripts/quick_validate.py .claude/skills/my-skill
+
+# Package a skill
+python .claude/skills/skill-creator/scripts/package_skill.py .claude/skills/my-skill
+```
+
+---
+
 ## 🏗️ Architecture
 
 ### The Self-Improving System
@@ -181,6 +213,7 @@ All skills in MetaSkill follow these standards:
 |-------|----------------|-------|--------|
 | SOUL | 149 | 10/10 | ✅ Excellent |
 | NEXUS | 231 | 10/10 | ✅ Good |
+| skill-creator | 356 | 10/10 | ✅ Good |
 
 ---
 
@@ -250,6 +283,13 @@ We welcome contributions! To add or improve skills:
 - [Installation](.claude/skills/nexus/references/INSTALLATION.md)
 - [Output Format](.claude/skills/nexus/references/OUTPUT_FORMAT.md)
 - [Multi-LLM](.claude/skills/nexus/references/MULTI_LLM.md)
+
+### skill-creator Documentation
+
+- [Complete Guide](.claude/skills/skill-creator/SKILL.md)
+- [Workflow Patterns](.claude/skills/skill-creator/references/workflows.md)
+- [Output Patterns](.claude/skills/skill-creator/references/output-patterns.md)
+- [LICENSE](.claude/skills/skill-creator/LICENSE.txt)
 
 ---
 
