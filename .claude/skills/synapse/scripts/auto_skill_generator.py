@@ -17,8 +17,8 @@ from datetime import datetime
 from typing import List, Dict
 
 # Add Cortex to path
-soul_scripts_path = Path(__file__).parent.parent.parent / "soul" / "scripts"
-sys.path.insert(0, str(soul_scripts_path))
+cortex_scripts_path = Path(__file__).parent.parent.parent / "cortex" / "scripts"
+sys.path.insert(0, str(cortex_scripts_path))
 
 try:
     from cortex_api import add_cortex_event, get_pattern_analysis
@@ -184,8 +184,8 @@ import sys
 from pathlib import Path
 
 # Add Cortex to path
-soul_path = Path(__file__).parent.parent.parent / "soul" / "scripts"
-sys.path.insert(0, str(soul_path))
+cortex_path = Path(__file__).parent.parent.parent / "cortex" / "scripts"
+sys.path.insert(0, str(cortex_path))
 
 try:
     from cortex_api import add_cortex_event
