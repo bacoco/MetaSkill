@@ -4,27 +4,27 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-MetaSkill is a self-improving AI workflow system consisting of three interdependent skills:
-- **SOUL**: Universal memory system (git hooks, session tracking, agent handoffs)
-- **NEXUS**: Pattern detector and automatic skill generator
-- **skill-generator**: Tools for creating new skills
+EvolveSkill is a self-improving AI workflow system consisting of three interdependent skills:
+- **Cortex**: Universal memory system (git hooks, session tracking, agent handoffs)
+- **Synapse**: Pattern detector and automatic skill generator
+- **Forge**: Tools for creating new skills
 
-These three skills work together in a loop: SOUL tracks work → NEXUS detects patterns → skill-generator creates automations → cycle repeats.
+These three skills work together in a loop: Cortex tracks work → Synapse detects patterns → Forge creates automations → cycle repeats.
 
 ## Important: Three-Skill Package Philosophy
 
 **All three skills MUST be distributed together.** They are interdependent:
-- SOUL provides the data NEXUS analyzes
-- NEXUS uses skill-generator templates to create new skills
-- Generated skills use SOUL API to record events
+- Cortex provides the data Synapse analyzes
+- Synapse uses Forge templates to create new skills
+- Generated skills use Cortex API to record events
 
-Do not split them into separate packages. The single MetaSkill.zip contains all three.
+Do not split them into separate packages. The single EvolveSkill.zip contains all three.
 
 ## Build and Package Commands
 
 ### Building Distribution
 ```bash
-# Package MetaSkill (creates dist/MetaSkill-v{VERSION}.zip)
+# Package EvolveSkill (creates dist/EvolveSkill-v{VERSION}.zip)
 ./package_metaskill.sh [VERSION]
 
 # Default version is 1.0.0
@@ -32,57 +32,57 @@ Do not split them into separate packages. The single MetaSkill.zip contains all 
 ```
 
 This creates a single universal zip containing:
-- `.claude/skills/soul/`
-- `.claude/skills/nexus/`
-- `.claude/skills/skill-generator/`
+- `.claude/skills/cortex/`
+- `.claude/skills/synapse/`
+- `.claude/skills/forge/`
 - README.md, INSTALLATION.md, .gitignore
 
 ### Testing Installation Locally
 ```bash
 # Install in a test project
 cd /path/to/test-project
-unzip /path/to/MetaSkill/dist/MetaSkill-v*.zip
-cd .claude/skills/soul/scripts
+unzip /path/to/EvolveSkill/dist/EvolveSkill-v*.zip
+cd .claude/skills/cortex/scripts
 ./install.sh
 
-# Verify SOUL tracking
+# Verify Cortex tracking
 git commit --allow-empty -m "Test commit"
-ls -la .agent_handoff.md .agent_log.md .agent_status.json
+ls -la .cortex_handoff.md .cortex_log.md .cortex_status.json
 ```
 
 ### Individual Skill Scripts
 
-**SOUL:**
+**Cortex:**
 ```bash
 # Install git hooks
-.claude/skills/soul/scripts/install.sh
+.claude/skills/cortex/scripts/install.sh
 
 # Manual session tracing
-python3 .claude/skills/soul/scripts/trace_session.py
+python3 .claude/skills/cortex/scripts/trace_session.py
 
 # Manual handoff generation
-python3 .claude/skills/soul/scripts/handoff_generator.py
+python3 .claude/skills/cortex/scripts/handoff_generator.py
 ```
 
-**NEXUS:**
+**Synapse:**
 ```bash
-# Analyze patterns (creates NEXUS_RECOMMENDATIONS.md)
-python .claude/skills/nexus/scripts/nexus_analyzer.py
+# Analyze patterns (creates Synapse_RECOMMENDATIONS.md)
+python .claude/skills/synapse/scripts/nexus_analyzer.py
 
 # Auto-generate skills from patterns
-python .claude/skills/nexus/scripts/auto_skill_generator.py
+python .claude/skills/synapse/scripts/auto_skill_generator.py
 ```
 
-**skill-generator:**
+**Forge:**
 ```bash
 # Initialize new skill
-python .claude/skills/skill-generator/scripts/init_skill.py <skill-name> --path <output-dir>
+python .claude/skills/forge/scripts/init_skill.py <skill-name> --path <output-dir>
 
 # Validate skill
-python .claude/skills/skill-generator/scripts/quick_validate.py <path/to/skill>
+python .claude/skills/forge/scripts/quick_validate.py <path/to/skill>
 
 # Package skill
-python .claude/skills/skill-generator/scripts/package_skill.py <path/to/skill> [output-dir]
+python .claude/skills/forge/scripts/package_skill.py <path/to/skill> [output-dir]
 ```
 
 ## Architecture
@@ -93,9 +93,9 @@ python .claude/skills/skill-generator/scripts/package_skill.py <path/to/skill> [
 ├── soul/
 │   ├── SKILL.md                    # Main skill documentation
 │   ├── scripts/
-│   │   ├── soul_api.py             # Python API for inter-skill communication
-│   │   ├── trace_session.py        # Updates .agent_log.md and .agent_status.json
-│   │   ├── handoff_generator.py    # Creates .agent_handoff.md
+│   │   ├── cortex_api.py             # Python API for inter-skill communication
+│   │   ├── trace_session.py        # Updates .cortex_log.md and .cortex_status.json
+│   │   ├── handoff_generator.py    # Creates .cortex_handoff.md
 │   │   └── install.sh              # Sets up git hooks
 │   └── references/
 │       ├── API_REFERENCE.md        # Complete API documentation
@@ -104,17 +104,17 @@ python .claude/skills/skill-generator/scripts/package_skill.py <path/to/skill> [
 ├── nexus/
 │   ├── SKILL.md
 │   ├── scripts/
-│   │   ├── nexus_analyzer.py       # Analyzes SOUL data for patterns
+│   │   ├── nexus_analyzer.py       # Analyzes Cortex data for patterns
 │   │   ├── auto_skill_generator.py # Auto-generates skills from patterns
 │   │   ├── prd_analyzer.py         # Extracts patterns from PRD files
 │   │   ├── pattern_detector.py     # Core pattern detection logic
-│   │   └── soul_integration.py     # SOUL API integration
+│   │   └── soul_integration.py     # Cortex API integration
 │   └── references/
 │       ├── EXAMPLES.md             # Real-world examples
 │       ├── CONFIGURATION.md        # Config reference
 │       ├── ADVANCED.md             # Pattern merging, customization
-│       └── OUTPUT_FORMAT.md        # NEXUS_RECOMMENDATIONS.md format
-└── skill-generator/
+│       └── OUTPUT_FORMAT.md        # Synapse_RECOMMENDATIONS.md format
+└── Forge/
     ├── SKILL.md
     └── scripts/
         ├── init_skill.py           # Generate skill template
@@ -122,36 +122,36 @@ python .claude/skills/skill-generator/scripts/package_skill.py <path/to/skill> [
         └── package_skill.py        # Create .skill zip file
 ```
 
-### SOUL Memory Files (Generated)
+### Cortex Memory Files (Generated)
 
-SOUL creates three files in project roots (NOT in this repo):
-- `.agent_log.md` - Detailed session history
-- `.agent_status.json` - Machine-readable state
-- `.agent_handoff.md` - Quick context for next session
+Cortex creates three files in project roots (NOT in this repo):
+- `.cortex_log.md` - Detailed session history
+- `.cortex_status.json` - Machine-readable state
+- `.cortex_handoff.md` - Quick context for next session
 
 These are in `.gitignore` but users may choose to commit them for team collaboration.
 
-### NEXUS Output Files (Generated)
+### Synapse Output Files (Generated)
 
-NEXUS creates in project roots (NOT in this repo):
-- `NEXUS_RECOMMENDATIONS.md` - Prioritized skill recommendations
+Synapse creates in project roots (NOT in this repo):
+- `Synapse_RECOMMENDATIONS.md` - Prioritized skill recommendations
 
 ### The Self-Improving Loop
 
 ```
 User codes normally
     ↓
-SOUL tracks via git hooks → Updates .agent_log.md, .agent_status.json
+Cortex tracks via git hooks → Updates .cortex_log.md, .cortex_status.json
     ↓
-User or cron runs NEXUS → Analyzes SOUL data
+User or cron runs Synapse → Analyzes Cortex data
     ↓
-NEXUS detects patterns (≥5 occurrences) → Creates NEXUS_RECOMMENDATIONS.md
+Synapse detects patterns (≥5 occurrences) → Creates Synapse_RECOMMENDATIONS.md
     ↓
-User or NEXUS auto-generates skills → Uses skill-generator templates
+User or Synapse auto-generates skills → Uses Forge templates
     ↓
-New skills use SOUL API → Record their own events
+New skills use Cortex API → Record their own events
     ↓
-Better data for NEXUS → Cycle continues
+Better data for Synapse → Cycle continues
 ```
 
 ## Key Design Principles
@@ -194,7 +194,7 @@ Skills are for AI agents, not human end-users.
 
 ### When Creating New Skills
 
-Follow skill-generator's 6-step process:
+Follow Forge's 6-step process:
 1. Understand with concrete examples
 2. Plan reusable contents (scripts/references/assets)
 3. Initialize (`init_skill.py`)
@@ -205,7 +205,7 @@ Follow skill-generator's 6-step process:
 ### Python Conventions
 
 - All scripts use Python 3.9+
-- SOUL API import: `from soul_api import add_soul_event, get_soul_memory, get_pattern_analysis`
+- Cortex API import: `from cortex_api import add_cortex_event, get_cortex_memory, get_pattern_analysis`
 - No external dependencies (uses stdlib only)
 - Scripts are standalone executables
 
@@ -218,7 +218,7 @@ Follow skill-generator's 6-step process:
 
 ## Multi-LLM Compatibility
 
-MetaSkill works with any CLI-based AI assistant:
+EvolveSkill works with any CLI-based AI assistant:
 - Claude Code (native)
 - GPT/Codex
 - Gemini CLI
@@ -229,20 +229,20 @@ All skills use universal formats (markdown, JSON) and avoid Claude-specific feat
 
 ## Common Tasks
 
-### Add New Functionality to SOUL
-1. Edit `.claude/skills/soul/scripts/soul_api.py` or related script
-2. Update `.claude/skills/soul/references/API_REFERENCE.md` if API changes
+### Add New Functionality to Cortex
+1. Edit `.claude/skills/cortex/scripts/cortex_api.py` or related script
+2. Update `.claude/skills/cortex/references/API_REFERENCE.md` if API changes
 3. Test by running script directly
-4. No need to repackage MetaSkill unless releasing new version
+4. No need to repackage EvolveSkill unless releasing new version
 
-### Add New Pattern Detection to NEXUS
-1. Edit `.claude/skills/nexus/scripts/pattern_detector.py`
+### Add New Pattern Detection to Synapse
+1. Edit `.claude/skills/synapse/scripts/pattern_detector.py`
 2. Update threshold logic or pattern types
-3. Test with real SOUL data (create test commits)
-4. Document in `.claude/skills/nexus/references/ADVANCED.md`
+3. Test with real Cortex data (create test commits)
+4. Document in `.claude/skills/synapse/references/ADVANCED.md`
 
 ### Create New Skill Template
-1. Edit `.claude/skills/nexus/scripts/enhanced_skill_templates.py`
+1. Edit `.claude/skills/synapse/scripts/enhanced_skill_templates.py`
 2. Add template following existing pattern structure
 3. Test by running `auto_skill_generator.py` to trigger generation
 4. Validate generated skill with `quick_validate.py`
@@ -251,7 +251,7 @@ All skills use universal formats (markdown, JSON) and avoid Claude-specific feat
 1. Update version number in `package_metaskill.sh` call
 2. Run `./package_metaskill.sh X.Y.Z`
 3. Test installation in clean project
-4. Create GitHub release with dist/MetaSkill-vX.Y.Z.zip
+4. Create GitHub release with dist/EvolveSkill-vX.Y.Z.zip
 
 ## Testing Workflow
 
@@ -263,15 +263,15 @@ mkdir /tmp/test-project
 cd /tmp/test-project
 git init
 
-# 2. Install MetaSkill
-unzip /path/to/MetaSkill/dist/MetaSkill-v*.zip
-cd .claude/skills/soul/scripts
+# 2. Install EvolveSkill
+unzip /path/to/EvolveSkill/dist/EvolveSkill-v*.zip
+cd .claude/skills/cortex/scripts
 ./install.sh
 cd /tmp/test-project
 
-# 3. Test SOUL tracking
+# 3. Test Cortex tracking
 git commit --allow-empty -m "Test commit"
-cat .agent_handoff.md  # Should show session summary
+cat .cortex_handoff.md  # Should show session summary
 
 # 4. Create test pattern (repeat 5+ times)
 for i in {1..6}; do
@@ -280,12 +280,12 @@ for i in {1..6}; do
   git commit -m "API call test $i"
 done
 
-# 5. Test NEXUS detection
-python /path/to/MetaSkill/.claude/skills/nexus/scripts/nexus_analyzer.py
-cat NEXUS_RECOMMENDATIONS.md  # Should show pattern recommendation
+# 5. Test Synapse detection
+python /path/to/EvolveSkill/.claude/skills/synapse/scripts/nexus_analyzer.py
+cat Synapse_RECOMMENDATIONS.md  # Should show pattern recommendation
 
 # 6. Test auto-generation
-python /path/to/MetaSkill/.claude/skills/nexus/scripts/auto_skill_generator.py
+python /path/to/EvolveSkill/.claude/skills/synapse/scripts/auto_skill_generator.py
 ls .claude/skills/  # Should see generated skill if pattern was HIGH/CRITICAL
 ```
 
@@ -293,8 +293,8 @@ ls .claude/skills/  # Should see generated skill if pattern was HIGH/CRITICAL
 
 - `__pycache__/`, `*.pyc` - Python cache
 - `.DS_Store`, `Thumbs.db` - OS artifacts
-- `NEXUS_RECOMMENDATIONS.md` - Generated output
-- `.agent_*` files - SOUL memory (user decision whether to commit)
+- `Synapse_RECOMMENDATIONS.md` - Generated output
+- `.cortex_*` files - Cortex memory (user decision whether to commit)
 - `dist/*.skill`, `dist/*.zip` - Build artifacts (commit to releases, not main branch)
 
 ## Documentation Standards

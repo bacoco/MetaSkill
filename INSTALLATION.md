@@ -1,6 +1,6 @@
-# MetaSkill Installation Guide
+# EvolveSkill Installation Guide
 
-Simple installation for the complete MetaSkill package (SOUL + NEXUS + skill-generator).
+Simple installation for the complete EvolveSkill package (Cortex + Synapse + Forge).
 
 ---
 
@@ -10,36 +10,36 @@ Simple installation for the complete MetaSkill package (SOUL + NEXUS + skill-gen
 
 ```bash
 # Option A: Download latest release
-wget https://github.com/bacoco/MetaSkill/releases/latest/download/MetaSkill.zip
+wget https://github.com/bacoco/EvolveSkill/releases/latest/download/EvolveSkill.zip
 
 # Option B: Clone repository
-git clone https://github.com/bacoco/MetaSkill.git
-cd MetaSkill
+git clone https://github.com/bacoco/EvolveSkill.git
+cd EvolveSkill
 ```
 
 ### 2. Install in Your Project
 
 ```bash
 # Extract (if downloaded zip)
-unzip MetaSkill.zip
+unzip EvolveSkill.zip
 
 # Copy skills to your project
 cp -r .claude/skills /path/to/your/project/.claude/
 
-# Setup SOUL tracking
-cd /path/to/your/project/.claude/skills/soul/scripts
+# Setup Cortex tracking
+cd /path/to/your/project/.claude/skills/cortex/scripts
 ./install.sh
 ```
 
-**Done!** MetaSkill is now active in your project.
+**Done!** EvolveSkill is now active in your project.
 
 ---
 
 ## What Just Happened?
 
-1. **SOUL installed git hooks** - Automatically tracks your work on every commit
-2. **NEXUS ready** - Will analyze patterns when you run it
-3. **skill-generator available** - Tools ready for creating custom skills
+1. **Cortex installed git hooks** - Automatically tracks your work on every commit
+2. **Synapse ready** - Will analyze patterns when you run it
+3. **Forge available** - Tools ready for creating custom skills
 
 ---
 
@@ -55,17 +55,17 @@ ls -la /path/to/your/project/.git/hooks/post-commit
 Make a test commit:
 
 ```bash
-git commit --allow-empty -m "Test SOUL tracking"
+git commit --allow-empty -m "Test Cortex tracking"
 
 # Check if files were created
-ls -la .agent_handoff.md .agent_log.md .agent_status.json
+ls -la .cortex_handoff.md .cortex_log.md .cortex_status.json
 ```
 
-If you see those files, SOUL is working!
+If you see those files, Cortex is working!
 
 ---
 
-## Using MetaSkill
+## Using EvolveSkill
 
 ### With Your AI Assistant
 
@@ -76,58 +76,58 @@ claude          # or gpt, gemini, cursor, aider, etc.
 ```
 
 Your assistant can now:
-- Read `.agent_handoff.md` for previous session context
-- Access SOUL memory via Python API
-- Use NEXUS to analyze patterns
-- Create custom skills with skill-generator
+- Read `.cortex_handoff.md` for previous session context
+- Access Cortex memory via Python API
+- Use Synapse to analyze patterns
+- Create custom skills with Forge
 
-### Running NEXUS
+### Running Synapse
 
 ```bash
 # Analyze patterns
-python .claude/skills/nexus/scripts/nexus_analyzer.py
+python .claude/skills/synapse/scripts/nexus_analyzer.py
 
 # Auto-generate skills from patterns
-python .claude/skills/nexus/scripts/auto_skill_generator.py
+python .claude/skills/synapse/scripts/auto_skill_generator.py
 ```
 
 ### Creating Custom Skills
 
 ```bash
 # Initialize new skill
-python .claude/skills/skill-generator/scripts/init_skill.py my-skill --path ./output
+python .claude/skills/forge/scripts/init_skill.py my-skill --path ./output
 
 # Validate skill
-python .claude/skills/skill-generator/scripts/quick_validate.py ./output/my-skill
+python .claude/skills/forge/scripts/quick_validate.py ./output/my-skill
 
 # Package skill
-python .claude/skills/skill-generator/scripts/package_skill.py ./output/my-skill
+python .claude/skills/forge/scripts/package_skill.py ./output/my-skill
 ```
 
 ---
 
-## Optional: Automatic NEXUS Monitoring
+## Optional: Automatic Synapse Monitoring
 
-Setup cron to run NEXUS every 30 minutes:
+Setup cron to run Synapse every 30 minutes:
 
 ```bash
 crontab -e
 
 # Add this line:
-*/30 * * * * cd /path/to/your/project && python .claude/skills/nexus/scripts/auto_skill_generator.py
+*/30 * * * * cd /path/to/your/project && python .claude/skills/synapse/scripts/auto_skill_generator.py
 ```
 
-This makes MetaSkill fully automatic - it will detect patterns and generate skills without manual intervention.
+This makes EvolveSkill fully automatic - it will detect patterns and generate skills without manual intervention.
 
 ---
 
 ## Troubleshooting
 
-### SOUL not tracking commits?
+### Cortex not tracking commits?
 
 ```bash
 # Reinstall git hooks
-cd .claude/skills/soul/scripts
+cd .claude/skills/cortex/scripts
 ./install.sh
 
 # Verify hook exists
@@ -142,17 +142,17 @@ chmod +x /path/to/your/project/.git/hooks/post-commit
 python3 --version
 
 # Run scripts with full path
-python3 /full/path/to/.claude/skills/nexus/scripts/nexus_analyzer.py
+python3 /full/path/to/.claude/skills/synapse/scripts/nexus_analyzer.py
 ```
 
 ### Permission denied on scripts?
 
 ```bash
 # Make all scripts executable
-chmod +x .claude/skills/soul/scripts/*.sh
-chmod +x .claude/skills/soul/scripts/*.py
-chmod +x .claude/skills/nexus/scripts/*.py
-chmod +x .claude/skills/skill-generator/scripts/*.py
+chmod +x .claude/skills/cortex/scripts/*.sh
+chmod +x .claude/skills/cortex/scripts/*.py
+chmod +x .claude/skills/synapse/scripts/*.py
+chmod +x .claude/skills/forge/scripts/*.py
 ```
 
 ---
@@ -166,25 +166,25 @@ rm /path/to/your/project/.git/hooks/post-commit
 # Remove skills
 rm -rf /path/to/your/project/.claude/skills
 
-# Remove SOUL files (optional)
-rm .agent_handoff.md .agent_log.md .agent_status.json
+# Remove Cortex files (optional)
+rm .cortex_handoff.md .cortex_log.md .cortex_status.json
 ```
 
 ---
 
 ## Next Steps
 
-1. **Start coding** - SOUL tracks automatically
-2. **Check handoff** - After first session, read `.agent_handoff.md`
-3. **Run NEXUS** - After a few sessions, let it analyze patterns
-4. **Create skills** - Use skill-generator for project-specific needs
+1. **Start coding** - Cortex tracks automatically
+2. **Check handoff** - After first session, read `.cortex_handoff.md`
+3. **Run Synapse** - After a few sessions, let it analyze patterns
+4. **Create skills** - Use Forge for project-specific needs
 
 ---
 
-**MetaSkill** - Three skills working together to improve your AI coding workflow
+**EvolveSkill** - Three skills working together to improve your AI coding workflow
 
 For detailed documentation, see:
 - [README.md](README.md) - Overview and usage
-- [SOUL SKILL.md](.claude/skills/soul/SKILL.md) - Memory system details
-- [NEXUS SKILL.md](.claude/skills/nexus/SKILL.md) - Pattern analyzer details
-- [skill-generator SKILL.md](.claude/skills/skill-generator/SKILL.md) - Skill creation guide
+- [Cortex SKILL.md](.claude/skills/cortex/SKILL.md) - Memory system details
+- [Synapse SKILL.md](.claude/skills/synapse/SKILL.md) - Pattern analyzer details
+- [Forge SKILL.md](.claude/skills/forge/SKILL.md) - Skill creation guide

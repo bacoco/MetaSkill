@@ -1,5 +1,5 @@
-# MetaSkill - Self-Improving AI Workflow System
-# Python dependencies for SOUL, NEXUS, and skill-generator
+# EvolveSkill - Self-Improving AI Workflow System
+# Python dependencies for Cortex, Synapse, and Forge
 
 # YAML parsing for skill validation
 PyYAML>=6.0
