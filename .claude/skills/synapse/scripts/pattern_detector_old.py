@@ -209,7 +209,7 @@ class CortexDataReader:
         self.agent_status_path = self.repo_root / ".cortex_status.json"
         self.agent_handoff_path = self.repo_root / ".cortex_handoff.md"
 
-    def read_all_soul_data(self) -> Dict:
+    def read_all_cortex_data(self) -> Dict:
         """Read all Cortex files and return structured data"""
         data = {
             "sessions": [],
@@ -1354,7 +1354,7 @@ class PatternDetectorMain:
             self.logger.warning("Configuration validation failed, using defaults")
 
         # Initialize components
-        self.soul_reader = CortexDataReader(repo_root, self.config)
+        self.cortex_reader = CortexDataReader(repo_root, self.config)
         self.pattern_detector = PatternDetector(self.config)
         self.skill_recommender = SkillRecommender(self.config)
         self.report_generator = ReportGenerator(self.config)
@@ -1366,15 +1366,15 @@ class PatternDetectorMain:
 
         # Step 1: Read Cortex data
         self.logger.info("Reading Cortex data...")
-        soul_data = self.soul_reader.read_all_soul_data()
+        cortex_data = self.cortex_reader.read_all_cortex_data()
 
-        if not soul_data.get("sessions"):
+        if not cortex_data.get("sessions"):
             self.logger.error("No session data found. Cannot perform analysis.")
             return {}
 
         # Step 2: Detect patterns
         self.logger.info("Detecting patterns...")
-        patterns = self.pattern_detector.analyze_all_patterns(soul_data)
+        patterns = self.pattern_detector.analyze_all_patterns(cortex_data)
 
         if not patterns:
             self.logger.warning("No patterns detected")
@@ -1385,7 +1385,7 @@ class PatternDetectorMain:
 
         # Step 4: Generate report
         self.logger.info("Generating report...")
-        report = self.report_generator.generate_report(patterns, recommendations, soul_data)
+        report = self.report_generator.generate_report(patterns, recommendations, cortex_data)
 
         # Step 5: Save report if output path specified
         if output_path:

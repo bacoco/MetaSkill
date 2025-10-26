@@ -11,8 +11,8 @@ from typing import Dict, List, Optional
 import json
 
 # Add Cortex to path
-soul_scripts_path = Path(__file__).parent.parent.parent / "soul" / "scripts"
-sys.path.insert(0, str(soul_scripts_path))
+cortex_scripts_path = Path(__file__).parent.parent.parent / "cortex" / "scripts"
+sys.path.insert(0, str(cortex_scripts_path))
 
 try:
     from cortex_api import get_pattern_analysis, get_cortex_memory, get_current_context
@@ -45,7 +45,7 @@ class SynapseUnifiedAnalyzer:
         self.days = days
         self.recommendations = []
 
-    def analyze_soul_patterns(self) -> List[Dict]:
+    def analyze_cortex_patterns(self) -> List[Dict]:
         """Analyze Cortex memory for recurring patterns"""
         if not Cortex_AVAILABLE:
             return []
@@ -174,9 +174,9 @@ class SynapseUnifiedAnalyzer:
 
         # 1. Cortex patterns
         print("📊 Analyzing Cortex memory patterns...")
-        soul_recs = self.analyze_soul_patterns()
-        print(f"   Found {len(soul_recs)} pattern-based recommendations\n")
-        all_recommendations.extend(soul_recs)
+        cortex_recs = self.analyze_cortex_patterns()
+        print(f"   Found {len(cortex_recs)} pattern-based recommendations\n")
+        all_recommendations.extend(cortex_recs)
 
         # 2. PRD/Tasks
         print("📋 Analyzing PRD and task files...")

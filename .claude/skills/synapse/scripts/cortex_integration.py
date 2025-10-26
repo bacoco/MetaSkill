@@ -10,8 +10,8 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Optional
 
 # Add Cortex to path
-soul_scripts_path = Path(__file__).parent.parent.parent / "soul" / "scripts"
-sys.path.insert(0, str(soul_scripts_path))
+cortex_scripts_path = Path(__file__).parent.parent.parent / "cortex" / "scripts"
+sys.path.insert(0, str(cortex_scripts_path))
 
 try:
     from cortex_api import (

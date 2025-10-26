@@ -28,7 +28,7 @@ class CortexDataReader:
         self.agent_status_path = self.repo_root / ".cortex_status.json"
         self.agent_handoff_path = self.repo_root / ".cortex_handoff.md"
 
-    def read_all_soul_data(self) -> Dict:
+    def read_all_cortex_data(self) -> Dict:
         """Read all Cortex files and return structured data"""
         data = {
             "sessions": [],
