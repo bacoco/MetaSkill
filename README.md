@@ -2,9 +2,9 @@
 
 Your AI forgets everything between sessions. Every conversation starts from zero.
 
-**EvolveSkill fixes this** with three skills that work together to create a self-improving system:
+**EvolveSkill fixes this** with four core skills that work together to create a self-improving system:
 
-**Cortex** (memory) → **Synapse** (pattern detection) → **Forge** (automation)
+**Cortex** (memory) → **Synapse** (pattern detection) → **Forge** (automation) → **MCP Provider** (tool integration)
 
 The loop never stops. Your AI gets better with every session.
 
@@ -34,14 +34,19 @@ Cortex tracks improvements → Loop continues
 System gets better forever
 ```
 
-### 🚀 New in v2.0.0
+### 🚀 New in v2.2.0
+- **MCP Provider Skill**: Integrate Model Context Protocol tools into your skills
+- **Complete Refactoring**: All skills now 100% compliant with Claude standards
+- **Enhanced Documentation**: Complete integration guides and references
+
+### 🎯 Version 2.1.0
 - **Centralized Configuration**: Unified settings across all components
-- **Test Suite**: Comprehensive tests for all modules
+- **Test Suite**: Comprehensive tests for all modules (17+ tests)
 - **Memory Optimization**: Efficient handling of large projects
 - **Enhanced Validation**: Robust input validation and error handling
 - **Makefile**: Convenient commands for common operations
 
-**This is why all three are packaged together.** One without the others is incomplete.
+**This is why all four skills are packaged together.** Each skill enhances the others.
 
 ---
 
@@ -87,10 +92,21 @@ System gets better forever
         └──────────────────────────────────────────────────┘
                                    ↓
         ┌──────────────────────────────────────────────────┐
+        │      MCP PROVIDER (Tool Integration)             │
+        │  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │
+        │  • Discovers MCP tools from catalogs             │
+        │  • Attaches tools to skills (secure sandbox)     │
+        │  • Tests integration and validates               │
+        │                                                   │
+        │  → Adds external capabilities to skills          │
+        └──────────────────────────────────────────────────┘
+                                   ↓
+        ┌──────────────────────────────────────────────────┐
         │           NEW CUSTOM SKILLS                       │
         │  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │
         │  • Tailored to YOUR workflow                     │
         │  • Use Cortex API to record events               │
+        │  • Can integrate MCP tools for external data     │
         │  • Make your AI faster at specific tasks         │
         └──────────────────────────────────────────────────┘
                                    ↓
@@ -112,7 +128,7 @@ System gets better forever
 
 ---
 
-## Real Examples (All Three Working Together)
+## Real Examples (The Four Skills Working Together)
 
 ### Sarah - API Authentication Work
 
@@ -225,7 +241,7 @@ Quick commands:
 
 ---
 
-## Why All Three Together?
+## Why All Four Skills Together?
 
 **Cortex alone:** Memory is helpful, but static. You still repeat the same tasks.
 
@@ -233,12 +249,15 @@ Quick commands:
 
 **Forge alone:** You manually create skills forever. No automation.
 
-**All three together:**
+**MCP Provider alone:** Can integrate tools, but doesn't know which ones you need.
+
+**All four together:**
 1. Cortex tracks everything → Feeds Synapse
 2. Synapse detects patterns → Triggers Forge
-3. Forge creates skills → Improves your workflow
-4. Better workflow → Better data for Cortex
-5. Cycle repeats → System self-improves
+3. Forge creates skills → Uses MCP Provider when external tools needed
+4. MCP Provider adds capabilities → Makes skills more powerful
+5. Better workflow → Better data for Cortex
+6. Cycle repeats → System self-improves
 
 **This is a loop, not a one-time tool.**
 

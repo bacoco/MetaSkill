@@ -40,6 +40,7 @@ cd /path/to/your/project/.claude/skills/cortex/scripts
 1. **Cortex installed git hooks** - Automatically tracks your work on every commit
 2. **Synapse ready** - Will analyze patterns when you run it
 3. **Forge available** - Tools ready for creating custom skills
+4. **MCP Provider available** - Can integrate external MCP tools into skills
 
 ---
 

@@ -2,6 +2,25 @@
 
 All notable changes to EvolveSkill will be documented in this file.
 
+## [2.2.0] - 2025-10-26
+
+### Added
+- **MCP Provider Skill**: New skill for integrating Model Context Protocol tools
+  - Discover MCP tools from approved catalogs
+  - Attach MCP tools to skills with security sandboxing
+  - Test MCP tool integration
+  - Complete integration guide and documentation
+  - Docker runtime support with strict security defaults
+  - 3 standalone scripts: discover_mcp.py, attach_mcp.py, test_mcp.py
+
+### Fixed
+- **MCP Provider Structure**: Refactored to comply with Claude skill standards
+  - Moved from `skills/` to `.claude/skills/mcp-provider/`
+  - Removed Python package structure (__init__.py files)
+  - Added proper YAML frontmatter to SKILL.md
+  - Simplified from 18 files to 3 standalone scripts
+  - Updated README.md with correct paths
+
 ## [2.1.0] - 2025-10-26
 
 ### Added

@@ -31,7 +31,7 @@ auto-generate:
 	@python3 .claude/skills/synapse/scripts/auto_skill_generator.py --threshold $(THRESHOLD) --days $(DAYS)
 
 package:
-	@bash ./package_evolveskill.sh 2.1.0
+	@bash ./package_evolveskill.sh 2.2.0
 
 test:
 	@bash ./scripts/run_tests.sh
