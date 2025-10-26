@@ -1,6 +1,6 @@
 # MetaSkill Installation Guide
 
-Complete installation guide for SOUL, NEXUS, and skill-creator.
+Complete installation guide for SOUL, NEXUS, and skill-generator.
 
 ## Quick Install
 
@@ -102,19 +102,19 @@ cat > .nexus_config.json << 'EOF'
 EOF
 ```
 
-### skill-creator Installation
+### skill-generator Installation
 
 No installation required! Use the scripts directly:
 
 ```bash
 # Initialize a new skill
-python .claude/skills/skill-creator/scripts/init_skill.py my-skill --path ./output
+python .claude/skills/skill-generator/scripts/init_skill.py my-skill --path ./output
 
 # Validate a skill
-python .claude/skills/skill-creator/scripts/quick_validate.py .claude/skills/my-skill
+python .claude/skills/skill-generator/scripts/quick_validate.py .claude/skills/my-skill
 
 # Package a skill
-python .claude/skills/skill-creator/scripts/package_skill.py .claude/skills/my-skill
+python .claude/skills/skill-generator/scripts/package_skill.py .claude/skills/my-skill
 ```
 
 ## Requirements
@@ -160,11 +160,11 @@ python .claude/skills/nexus/scripts/auto_skill_generator.py --dry-run --verbose
 cat NEXUS_RECOMMENDATIONS.md
 ```
 
-### Verify skill-creator Installation
+### Verify skill-generator Installation
 
 ```bash
 # Validate an existing skill
-python .claude/skills/skill-creator/scripts/quick_validate.py .claude/skills/soul
+python .claude/skills/skill-generator/scripts/quick_validate.py .claude/skills/soul
 
 # Should show validation results
 ```
@@ -243,7 +243,7 @@ python .claude/skills/nexus/scripts/nexus_analyzer.py --threshold 1
 chmod +x .claude/skills/soul/scripts/*.sh
 chmod +x .claude/skills/soul/scripts/*.py
 chmod +x .claude/skills/nexus/scripts/*.py
-chmod +x .claude/skills/skill-creator/scripts/*.py
+chmod +x .claude/skills/skill-generator/scripts/*.py
 chmod +x .claude/skills/scripts/*.sh
 ```
 
@@ -268,12 +268,12 @@ After installation:
 1. **Start working** - SOUL will automatically track your work
 2. **Check `.agent_handoff.md`** after each session for context
 3. **Run NEXUS** periodically to discover skill opportunities
-4. **Create custom skills** using skill-creator when needed
+4. **Create custom skills** using skill-generator when needed
 
 For more information, see individual skill documentation:
 - [SOUL Documentation](.claude/skills/soul/SKILL.md)
 - [NEXUS Documentation](.claude/skills/nexus/SKILL.md)
-- [skill-creator Documentation](.claude/skills/skill-creator/SKILL.md)
+- [skill-generator Documentation](.claude/skills/skill-generator/SKILL.md)
 
 ---
 
