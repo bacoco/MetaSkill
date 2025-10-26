@@ -125,12 +125,12 @@ System gets better forever
 
 ## Installation (Works With Any AI Assistant)
 
-**10 seconds. Works with Claude Code, GPT, Gemini, Cursor, Aider, any AI that reads markdown.**
+**One command. Works with Claude Code, GPT, Gemini, Cursor, Aider, any AI that reads markdown.**
 
 ### Copy this to your AI:
 
-```
-Clone https://github.com/bacoco/EvolveSkill into .claude/skills and run install.sh
+```bash
+curl -sL https://raw.githubusercontent.com/bacoco/EvolveSkill/main/install.sh | bash
 ```
 
 That's it. Your AI now has:

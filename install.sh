@@ -1,45 +1,43 @@
 #!/bin/bash
-# EvolveSkill Auto-Install
-# Sets up Cortex tracking (git hooks)
+# EvolveSkill - One-command installation
+# Usage: curl -sL https://raw.githubusercontent.com/bacoco/EvolveSkill/main/install.sh | bash
 
 set -e
 
-echo "🚀 Installing EvolveSkill..."
+echo "🧠 Installing EvolveSkill..."
 echo ""
 
-# Check we're in .claude/skills directory
-if [[ ! $(pwd) =~ \.claude/skills ]]; then
-    echo "⚠️  Warning: Not in .claude/skills directory"
-    echo "   Current: $(pwd)"
-    echo "   Expected: .../project/.claude/skills"
-    echo ""
-    echo "   Install should be run from .claude/skills/"
-    echo "   Or let your AI handle the installation."
-    exit 1
+# Detect if we're in the cloned repo or installing remotely
+if [ -f "dist/EvolveSkill-v2.0.0.zip" ]; then
+    echo "📦 Using local package..."
+    ZIP_FILE="dist/EvolveSkill-v2.0.0.zip"
+else
+    echo "📥 Downloading latest package..."
+    ZIP_FILE="/tmp/EvolveSkill-v2.0.0.zip"
+    curl -sL https://github.com/bacoco/EvolveSkill/raw/main/dist/EvolveSkill-v2.0.0.zip -o "$ZIP_FILE"
 fi
 
-# Navigate to Cortex install script
-cd soul/scripts
+# Create .claude/skills directory if it doesn't exist
+mkdir -p .claude/skills
 
-# Run Cortex installation
-echo "📦 Setting up Cortex tracking..."
+# Extract skills
+echo "📂 Extracting skills..."
+unzip -q -o "$ZIP_FILE" -d .claude/skills
+
+# Run Cortex installation (git hooks)
+echo "🔧 Setting up git hooks..."
+cd .claude/skills/cortex/scripts
 ./install.sh
-
-cd ../..
+cd - > /dev/null
 
 echo ""
 echo "✅ EvolveSkill installed successfully!"
 echo ""
-echo "What just happened:"
-echo "  - Cortex: Git hooks installed (tracks your work automatically)"
-echo "  - Synapse: Ready (analyzes patterns when you run it)"
-echo "  - Forge: Ready (creates custom skills)"
+echo "📋 Installed skills:"
+echo "  • Cortex - Universal memory system"
+echo "  • Synapse - Pattern detection"
+echo "  • Forge - Skill creation tools"
 echo ""
-echo "Next steps:"
-echo "  1. Start coding normally"
-echo "  2. Cortex tracks automatically on each commit"
-echo "  3. Check .cortex_handoff.md after your first commit"
-echo "  4. Your AI can now read it for context"
-echo ""
-echo "That's it. The self-improving loop is active."
+echo "🚀 You're ready! Just start coding."
+echo "   Your AI now has memory, pattern detection, and skill generation."
 echo ""
