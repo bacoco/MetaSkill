@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# NEXUS output
+NEXUS_RECOMMENDATIONS.md
+.nexus_config.json
+
+# SOUL generated files (project-specific, not in MetaSkill)
+.agent_handoff.md
+.agent_log.md
+.agent_status.json
+
+# Generated skills (if testing locally)
+.claude/skills/generated-*/
+
+# Test artifacts
+.pytest_cache/
+*.log
+
+# Packaged skills (development)
+*.skill
+skills.zip
