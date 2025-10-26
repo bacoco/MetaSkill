@@ -13,7 +13,15 @@ Example:
 import sys
 import zipfile
 from pathlib import Path
-from quick_validate import validate_skill
+
+# Support execution both as a package module and as a directly loaded script
+try:  # pragma: no cover - exercised indirectly in tests
+    from .quick_validate import validate_skill  # type: ignore
+except ImportError:  # pragma: no cover
+    current_dir = Path(__file__).resolve().parent
+    if str(current_dir) not in sys.path:
+        sys.path.insert(0, str(current_dir))
+    from quick_validate import validate_skill
 
 
 def package_skill(skill_path, output_dir=None):
@@ -61,7 +69,9 @@ def package_skill(skill_path, output_dir=None):
     else:
         output_path = Path.cwd()
 
-    skill_filename = output_path / f"{skill_name}.skill"
+    # Use standard .zip extension so downstream tooling (and our tests)
+    # can treat the packaged skill as a regular archive.
+    skill_filename = output_path / f"{skill_name}.zip"
 
     # Create the .skill file (zip format)
     try:
@@ -75,7 +85,7 @@ def package_skill(skill_path, output_dir=None):
                     print(f"  Added: {arcname}")
 
         print(f"\n✅ Successfully packaged skill to: {skill_filename}")
-        return skill_filename
+        return str(skill_filename)
 
     except Exception as e:
         print(f"❌ Error creating .skill file: {e}")

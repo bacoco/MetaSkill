@@ -11,9 +11,14 @@ import logging
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, List, Optional
+import sys
 
-from .data_models import SessionData
-from .config_manager import ConfigManager
+MODULE_DIR = Path(__file__).resolve().parent
+if str(MODULE_DIR) not in sys.path:
+    sys.path.insert(0, str(MODULE_DIR))
+
+from data_models import SessionData  # type: ignore
+from config_manager import ConfigManager  # type: ignore
 
 
 class CortexDataReader:

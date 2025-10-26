@@ -47,8 +47,8 @@ class ConfigManager:
     }
 
     def __init__(self, config_path: Optional[str] = None):
-        self.config = self.load_config(config_path)
         self.logger = logging.getLogger(__name__)
+        self.config = self.load_config(config_path)
 
     def load_config(self, config_path: Optional[str]) -> Dict:
         """Load configuration from file or use defaults"""

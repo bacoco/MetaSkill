@@ -10,25 +10,27 @@ from typing import Dict, List
 @dataclass
 class SessionData:
     """Represents a single Cortex session"""
-    timestamp: str
-    agent: str
-    repository: str
-    total_files: int
-    modified_files: int
-    added_files: int
-    deleted_files: int
-    untracked_files: int
-    file_categories: Dict[str, List[str]]
-    recent_commits: List[Dict[str, str]]
-    problems_solved: List[str]
-    git_status: str
-    branch: str
-    changed_files: List[str]
+
+    timestamp: str = ""
+    agent: str = ""
+    repository: str = ""
+    total_files: int = 0
+    modified_files: int = 0
+    added_files: int = 0
+    deleted_files: int = 0
+    untracked_files: int = 0
+    file_categories: Dict[str, List[str]] = field(default_factory=dict)
+    recent_commits: List[Dict[str, str]] = field(default_factory=list)
+    problems_solved: List[str] = field(default_factory=list)
+    git_status: str = ""
+    branch: str = "main"
+    changed_files: List[str] = field(default_factory=list)
 
 
 @dataclass
 class PatternInfo:
     """Information about a detected pattern"""
+
     pattern_type: str
     description: str
     frequency: int
@@ -38,10 +40,32 @@ class PatternInfo:
     examples: List[str]
     metadata: Dict = field(default_factory=dict)
 
+    def combined_priority_score(self) -> float:
+        """Calculate a simple combined score used for ranking patterns."""
+
+        base_scores = [
+            max(self.frequency, 0),
+            max(self.impact_score, 0.0),
+            max(self.trend_score, 0.0),
+            max(self.urgency_score, 0.0),
+        ]
+
+        # Normalize frequency to avoid over-emphasizing huge counts.
+        normalized_frequency = min(base_scores[0] / 10.0, 1.0)
+        weighted_scores = [
+            normalized_frequency,
+            base_scores[1],
+            base_scores[2],
+            base_scores[3],
+        ]
+
+        return sum(weighted_scores) / len(weighted_scores)
+
 
 @dataclass
 class SkillRecommendation:
     """Recommendation for a new skill"""
+
     skill_name: str
     skill_type: str
     description: str
