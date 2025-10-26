@@ -1,6 +1,7 @@
 ---
 name: soul
-description: Universal memory system that automatically tracks all sessions, enables agent handoffs, and provides inter-skill communication through persistent logs and machine-readable state files.
+description: Automatic session tracking and memory system for Claude Code. Activates when working in git repositories to track file changes, commits, and session context. Creates .agent_log.md (session history), .agent_status.json (current state), and .agent_handoff.md (next steps) for session continuity across conversations. Use when needing persistent memory, session handoffs, or work history tracking.
+allowed-tools: Read, Write, Bash, Grep, Glob
 ---
 
 # SOUL - Session Orchestration & Universal Logging

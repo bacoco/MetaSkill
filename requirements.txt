@@ -1,0 +1,8 @@
+# MetaSkill - Self-Improving AI Workflow System
+# Python dependencies for SOUL, NEXUS, and skill-generator
+
+# YAML parsing for skill validation
+PyYAML>=6.0
+
+# No other dependencies - uses Python stdlib only for maximum compatibility
+# Works with Python 3.9+

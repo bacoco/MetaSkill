@@ -300,14 +300,24 @@ class SOULMemory:
 
 # Fonctions globales pour faciliter l'utilisation
 
-_soul_instance = None
+_soul_instances = {}  # Dict of singletons indexed by repo_path
 
 def get_soul_instance(repo_path: str = ".") -> SOULMemory:
-    """Obtenir l'instance SOUL singleton"""
-    global _soul_instance
-    if _soul_instance is None:
-        _soul_instance = SOULMemory(repo_path)
-    return _soul_instance
+    """Obtenir l'instance SOUL singleton pour un repo donné"""
+    global _soul_instances
+
+    # Normalize the path to ensure consistency
+    normalized_path = str(Path(repo_path).resolve())
+
+    if normalized_path not in _soul_instances:
+        _soul_instances[normalized_path] = SOULMemory(normalized_path)
+
+    return _soul_instances[normalized_path]
+
+def clear_soul_instances():
+    """Clear all singleton instances (useful for testing)"""
+    global _soul_instances
+    _soul_instances = {}
 
 
 def add_soul_event(event_type: str, description: str, metadata: Optional[Dict] = None):

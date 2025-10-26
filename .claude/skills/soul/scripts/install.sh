@@ -1,152 +1,139 @@
 #!/bin/bash
 
-# SOUL - Universal AI Agent Memory System
-# Installs SOUL for any LLM (Claude, GPT, Gemini, LLaMA, etc.)
+# SOUL - Git Hook Installer
+# Installs post-commit hook to automatically track sessions
 
 set -e
 
-echo "🔮 Installing SOUL - Universal AI Agent Memory System..."
-echo "   S.eamless O.rganized U.niversal L.earning"
+echo "🔮 Installing SOUL Git Hooks..."
+echo "   Automatic session tracking for Claude Code"
 echo ""
 
-# Parse command line arguments
-MODEL="claude"  # Default to Claude
-while [[ $# -gt 0 ]]; do
-    case $1 in
-        --model)
-            MODEL="$2"
-            shift 2
-            ;;
-        *)
-            echo "Usage: $0 [--model claude|gpt|gemini|universal]"
-            exit 1
-            ;;
-    esac
-done
-
-echo "🎯 Installing SOUL for: $MODEL"
-echo ""
-
-# Universal installation
-SOUL_DIR="$HOME/.soul"
-echo "📁 Creating SOUL directory..."
-mkdir -p "$SOUL_DIR"
-
-# Copy SOUL files
-echo "📋 Copying SOUL files..."
-if [ -d "$SOUL_DIR" ]; then
-    echo "⚠️  SOUL already exists. Updating..."
-    rm -rf "$SOUL_DIR"/*
+# Get the repository root
+REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
+if [ -z "$REPO_ROOT" ]; then
+    echo "❌ Error: Not in a git repository"
+    echo "   Please run this from within a git repository"
+    exit 1
 fi
 
-cp -r "$(dirname "$0")"/* "$SOUL_DIR/"
+echo "📁 Repository: $REPO_ROOT"
 
-# Make scripts executable
-echo "🔧 Making scripts executable..."
-chmod +x "$SOUL_DIR"/*.py
-chmod +x "$SOUL_DIR"/*.sh
+# Get the path to SOUL scripts
+SOUL_SCRIPTS="$REPO_ROOT/.claude/skills/soul/scripts"
+if [ ! -d "$SOUL_SCRIPTS" ]; then
+    echo "❌ Error: SOUL scripts not found at $SOUL_SCRIPTS"
+    echo "   Please ensure MetaSkill is properly installed in .claude/skills/"
+    exit 1
+fi
 
-# Model-specific installation
-case $MODEL in
-    claude)
-        echo "🤖 Installing for Claude Skills..."
-        CLAUDE_SKILLS_DIR="$HOME/.claude/skills"
-        mkdir -p "$CLAUDE_SKILLS_DIR"
-        ln -sf "$SOUL_DIR" "$CLAUDE_SKILLS_DIR/soul"
-        echo "✅ Claude Skills integration complete"
-        ;;
-    gpt)
-        echo "🧠 Installing for GPT..."
-        cat > "$HOME/.soul_gpt_instructions.txt" << 'EOF'
-You are an AI agent with SOUL (Seamless Organized Universal Learning).
+# Create hooks directory if it doesn't exist
+HOOKS_DIR="$REPO_ROOT/.git/hooks"
+mkdir -p "$HOOKS_DIR"
 
-IMPORTANT: At the start of each session, read:
-- .agent_log.md (complete work history)
-- .agent_handoff.md (immediate next steps)  
-- .agent_status.json (machine-readable state)
+# Create the post-commit hook
+POST_COMMIT_HOOK="$HOOKS_DIR/post-commit"
 
-At the end of each session, run:
-python3 ~/.soul/trace_session.py --verbose
+echo "📝 Creating post-commit hook..."
 
-This gives you persistent memory across sessions.
+# Check if hook already exists
+if [ -f "$POST_COMMIT_HOOK" ]; then
+    echo "⚠️  Warning: post-commit hook already exists"
+
+    # Check if it's our hook
+    if grep -q "SOUL Session Tracer" "$POST_COMMIT_HOOK" 2>/dev/null; then
+        echo "   ✓ SOUL hook already installed, updating..."
+    else
+        # Backup existing hook
+        BACKUP_NAME="$POST_COMMIT_HOOK.backup.$(date +%Y%m%d_%H%M%S)"
+        cp "$POST_COMMIT_HOOK" "$BACKUP_NAME"
+        echo "   → Backed up existing hook to: $(basename $BACKUP_NAME)"
+    fi
+fi
+
+# Write the post-commit hook
+cat > "$POST_COMMIT_HOOK" << 'EOF'
+#!/bin/bash
+# SOUL Session Tracer - Auto-generated hook
+# This hook automatically tracks your work after each commit
+
+# Get repository root
+REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
+if [ -z "$REPO_ROOT" ]; then
+    exit 0
+fi
+
+# Path to SOUL tracer script
+TRACER_SCRIPT="$REPO_ROOT/.claude/skills/soul/scripts/trace_session.py"
+
+# Check if tracer exists
+if [ ! -f "$TRACER_SCRIPT" ]; then
+    # Silent fail - don't break git workflow if SOUL is removed
+    exit 0
+fi
+
+# Run the tracer in background to not slow down git
+{
+    python3 "$TRACER_SCRIPT" --repo "$REPO_ROOT" 2>/dev/null || \
+    python "$TRACER_SCRIPT" --repo "$REPO_ROOT" 2>/dev/null || \
+    true
+} &
+
+# Always exit successfully to not break git workflow
+exit 0
 EOF
-        echo "✅ GPT instructions saved to ~/.soul_gpt_instructions.txt"
-        ;;
-    gemini)
-        echo "💎 Installing for Gemini..."
-        cat > "$HOME/.soul_gemini_prompt.txt" << 'EOF'
-You have access to SOUL - a universal AI memory system.
 
-INITIALIZATION: Always start by reading these files:
-1. .agent_log.md - Previous agents' work history
-2. .agent_handoff.md - Priority actions for you
-3. .agent_status.json - Current project state
+# Make the hook executable
+chmod +x "$POST_COMMIT_HOOK"
 
-TERMINATION: Before ending, always run:
-python3 ~/.soul/trace_session.py --verbose
-python3 ~/.soul/handoff_generator.py --both
-EOF
-        echo "✅ Gemini prompt saved to ~/.soul_gemini_prompt.txt"
-        ;;
-    universal)
-        echo "🌍 Installing for Universal LLM usage..."
-        cat > "$HOME/.soul_universal_guide.txt" << 'EOF'
-SOUL - Universal AI Memory System
+echo "✅ Git hook installed successfully"
 
-Add this to any LLM's system prompt:
+# Test if Python is available
+if command -v python3 &> /dev/null; then
+    PYTHON_CMD="python3"
+elif command -v python &> /dev/null; then
+    PYTHON_CMD="python"
+else
+    echo "⚠️  Warning: Python not found in PATH"
+    echo "   SOUL requires Python 3.6+ to run"
+fi
 
-"You are equipped with SOUL memory system.
-Before starting: read .agent_log.md for context.
-Before ending: run python3 ~/.soul/trace_session.py"
+# Initialize SOUL files if they don't exist
+echo ""
+echo "📊 Initializing SOUL memory files..."
 
-For API usage, load .agent_handoff.md and include in context.
-EOF
-        echo "✅ Universal guide saved to ~/.soul_universal_guide.txt"
-        ;;
-esac
+if [ -n "$PYTHON_CMD" ]; then
+    # Run initial trace to create files
+    $PYTHON_CMD "$SOUL_SCRIPTS/trace_session.py" --repo "$REPO_ROOT" 2>/dev/null || true
 
-# Test the installation
-echo "🧪 Testing SOUL installation..."
-cd "$SOUL_DIR"
-python3 trace_session.py --help > /dev/null
-python3 handoff_generator.py --help > /dev/null
+    # Check if files were created
+    if [ -f "$REPO_ROOT/.agent_log.md" ]; then
+        echo "✅ Created .agent_log.md"
+    fi
+    if [ -f "$REPO_ROOT/.agent_status.json" ]; then
+        echo "✅ Created .agent_status.json"
+    fi
+    if [ -f "$REPO_ROOT/.agent_handoff.md" ]; then
+        echo "✅ Created .agent_handoff.md"
+    fi
+fi
 
 echo ""
-echo "🎉 SOUL installed successfully!"
+echo "🎉 SOUL installation complete!"
 echo ""
-echo "📍 SOUL Location: $SOUL_DIR"
-echo "🎯 Model: $MODEL"
+echo "📚 SOUL will now automatically track:"
+echo "   - All git commits"
+echo "   - File changes"
+echo "   - Session context"
 echo ""
-echo "🔮 SOUL Features:"
-echo "  ✅ Persistent memory across AI sessions"
-echo "  ✅ Cross-model collaboration (Claude ↔ GPT ↔ Gemini)"
-echo "  ✅ Universal problem-solution database"
-echo "  ✅ Seamless handoffs between different AIs"
+echo "📁 Memory files created in repository root:"
+echo "   - .agent_log.md (session history)"
+echo "   - .agent_status.json (current state)"
+echo "   - .agent_handoff.md (next steps)"
 echo ""
-echo "📚 Files created by SOUL:"
-echo "  - .agent_log.md (detailed work history)"
-echo "  - .agent_status.json (machine-readable status)"
-echo "  - .agent_handoff.md (immediate next steps)"
+echo "💡 Tips:"
+echo "   - Files are updated after each commit"
+echo "   - Add .agent_* to .gitignore if you don't want to track them"
+echo "   - Run 'python3 $SOUL_SCRIPTS/trace_session.py' to manually update"
 echo ""
-echo "🚀 Your AI agents now have a SOUL!"
-echo "   They can remember, learn, and collaborate across sessions."
-echo ""
-echo "💡 Next steps:"
-case $MODEL in
-    claude)
-        echo "  - SOUL will activate automatically in Claude"
-        echo "  - No additional setup needed"
-        ;;
-    gpt)
-        echo "  - Add contents of ~/.soul_gpt_instructions.txt to GPT custom instructions"
-        echo "  - SOUL will provide persistent memory"
-        ;;
-    gemini)
-        echo "  - Use ~/.soul_gemini_prompt.txt as system prompt"
-        echo "  - SOUL will enable cross-session continuity"
-        ;;
-    universal)
-        echo "  - See ~/.soul_universal_guide.txt for integration with any LLM"
-        echo "  - SOUL works with Claude, GPT, Gemini, LLaMA, and more"
-        ;;
-esac
+echo "🚀 Make a commit to test the installation!"

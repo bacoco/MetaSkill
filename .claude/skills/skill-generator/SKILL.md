@@ -1,6 +1,7 @@
 ---
 name: skill-generator
-description: Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends AI agent capabilities with specialized knowledge, workflows, or tool integrations.
+description: Claude Code skill creation and validation toolkit. Activates when creating new skills, validating skill structure, or packaging skills for distribution. Provides templates, validation scripts (quick_validate.py), initialization tools (init_skill.py), and packaging utilities (package_skill.py). Use when building custom skills with SKILL.md, scripts, references, or assets. Enforces progressive disclosure (<500 lines), proper YAML frontmatter, and hyphen-case naming.
+allowed-tools: Read, Write, Bash, Edit
 license: Complete terms in LICENSE.txt
 ---
 

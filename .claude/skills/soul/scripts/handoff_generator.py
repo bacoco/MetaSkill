@@ -55,24 +55,55 @@ class HandoffGenerator:
     def get_priority_next_steps(self) -> List[str]:
         """Determine priority next steps based on project state."""
         steps = []
-        
-        # Check for setup scripts
-        if (self.repo_path / "run_global_pipeline.sh").exists():
-            steps.append("Run `./run_global_pipeline.sh` to continue dataset creation")
-        
-        if (self.repo_path / "test_setup.py").exists():
-            steps.append("Run `python test_setup.py` to verify environment")
-        
+
+        # Check for common build/run scripts
+        script_patterns = [
+            ("Makefile", "Run `make` to build the project"),
+            ("package.json", "Run `npm install` to install dependencies"),
+            ("Cargo.toml", "Run `cargo build` to build the Rust project"),
+            ("setup.py", "Run `python setup.py install` to install the package"),
+            ("docker-compose.yml", "Run `docker-compose up` to start services"),
+            ("gradle.build", "Run `gradle build` to build the project"),
+            ("pom.xml", "Run `mvn install` to build the Maven project")
+        ]
+
+        for filename, suggestion in script_patterns:
+            if (self.repo_path / filename).exists():
+                steps.append(suggestion)
+
+        # Check for test files
+        test_patterns = [
+            ("test_*.py", "Run tests with pytest or unittest"),
+            ("*_test.go", "Run `go test` to execute tests"),
+            ("*.test.js", "Run `npm test` to execute tests"),
+            ("spec/*.rb", "Run `rspec` to execute tests")
+        ]
+
+        for pattern, suggestion in test_patterns:
+            if list(self.repo_path.glob(pattern)):
+                if suggestion not in steps:
+                    steps.append(suggestion)
+                break
+
         # Check for incomplete setup
         env_example = self.repo_path / ".env.example"
         env_file = self.repo_path / ".env"
         if env_example.exists() and not env_file.exists():
-            steps.append("Create .env file from .env.example and configure tokens")
-        
-        # Check for requirements
-        if (self.repo_path / "requirements.txt").exists():
-            steps.append("Ensure dependencies are installed: `pip install -r requirements.txt`")
-        
+            steps.append("Create .env file from .env.example and configure environment")
+
+        # Check for dependency files
+        dependency_files = [
+            ("requirements.txt", "pip install -r requirements.txt"),
+            ("Gemfile", "bundle install"),
+            ("go.mod", "go mod download"),
+            ("pubspec.yaml", "flutter pub get"),
+            ("composer.json", "composer install")
+        ]
+
+        for filename, command in dependency_files:
+            if (self.repo_path / filename).exists():
+                steps.append(f"Install dependencies: `{command}`")
+
         # Default steps if nothing specific found
         if not steps:
             steps = [
@@ -80,7 +111,7 @@ class HandoffGenerator:
                 "Check git status for any uncommitted changes",
                 "Run any available tests to verify current state"
             ]
-        
+
         return steps[:5]  # Limit to top 5 priorities
     
     def extract_critical_context(self) -> Dict[str, Any]:
@@ -98,12 +129,21 @@ class HandoffGenerator:
             context["recent_problems"] = status.get("problems_solved", [])[-3:]
             context["key_decisions"] = status.get("key_decisions", [])[-3:]
         
-        # Look for specific project context
-        if (self.repo_path / "global_incremental_builder.py").exists():
-            context["technical_notes"].append("Project uses global incremental pipeline for cross-computer work")
-        
-        if (self.repo_path / ".env.example").exists():
-            context["technical_notes"].append("Requires HuggingFace token configuration")
+        # Look for general project context patterns
+        project_patterns = [
+            ("Dockerfile", "Project uses Docker containerization"),
+            (".github/workflows", "Project uses GitHub Actions for CI/CD"),
+            (".gitlab-ci.yml", "Project uses GitLab CI/CD"),
+            ("kubernetes", "Project uses Kubernetes for orchestration"),
+            (".env.example", "Project requires environment configuration"),
+            ("migrations", "Project uses database migrations"),
+            ("terraform", "Project uses Terraform for infrastructure"),
+            ("ansible", "Project uses Ansible for configuration management")
+        ]
+
+        for pattern, note in project_patterns:
+            if (self.repo_path / pattern).exists() or list(self.repo_path.glob(f"**/{pattern}")):
+                context["technical_notes"].append(note)
         
         return context
     

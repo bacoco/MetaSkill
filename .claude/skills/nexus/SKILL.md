@@ -1,6 +1,7 @@
 ---
 name: nexus
-description: Unified analyzer that monitors SOUL memory, PRD files, and tasks to automatically generate skills based on detected patterns. The brain of the self-improving skills system.
+description: Pattern detection and automatic skill recommendation system. Activates when analyzing SOUL memory files, detecting recurring work patterns, or determining if new skills are needed. Analyzes .agent_log.md, PRD files, and task lists to identify patterns (API calls, testing, deployment, etc.) appearing 5+ times. Generates NEXUS_RECOMMENDATIONS.md with prioritized skill suggestions. Use when optimizing workflows or identifying automation opportunities.
+allowed-tools: Read, Write, Bash, Grep, Glob
 ---
 
 # NEXUS - Automatic Skill Generator
