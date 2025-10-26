@@ -1,10 +1,12 @@
-# MetaSkill - Universal Claude Code Skills Repository
+# MetaSkill - Universal AI Agent Skills
 
-Professional, production-ready skills for Claude Code following progressive disclosure best practices.
+Professional, production-ready skills for AI coding agents following progressive disclosure best practices.
 
 ## 🎯 Overview
 
-MetaSkill is a collection of high-quality, reusable skills that extend Claude Code's capabilities. All skills follow professional standards with progressive disclosure documentation and achieve 10/10 quality ratings.
+MetaSkill is a collection of high-quality, reusable skills that extend AI agent capabilities. All skills are **LLM-agnostic** - they work with any AI coding assistant including Claude Code, GPT, Gemini, Cursor, Aider, and more.
+
+Skills are pure markdown documentation + Python scripts - no vendor lock-in, no proprietary formats.
 
 ## 📦 Included Skills
 
@@ -19,7 +21,7 @@ Universal memory system that automatically tracks all sessions, enables agent ha
 - Agent handoff between sessions
 - Python API for inter-skill communication
 - Pattern detection for NEXUS
-- Multi-LLM support (Claude, GPT, Gemini, Cursor, Aider)
+- Universal LLM support (works with all AI coding assistants)
 
 **Documentation:**
 - [SKILL.md](.claude/skills/soul/SKILL.md) - Quick start and overview (149 lines)
@@ -69,11 +71,11 @@ python .claude/skills/nexus/scripts/nexus_analyzer.py
 
 ---
 
-### 🛠️ skill-creator - Official Skill Creation Tool
+### 🛠️ skill-generator - Official Skill Creation Tool
 
 **Score: 10/10**
 
-Official guide for creating effective skills that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations.
+Official guide for creating effective skills that extends any AI agent's capabilities with specialized knowledge, workflows, or tool integrations.
 
 **Key Features:**
 - Complete skill creation workflow (6 steps)
@@ -83,20 +85,20 @@ Official guide for creating effective skills that extends Claude's capabilities 
 - Best practices and templates
 
 **Documentation:**
-- [SKILL.md](.claude/skills/skill-creator/SKILL.md) - Complete creation guide (356 lines)
-- [workflows.md](.claude/skills/skill-creator/references/workflows.md) - Multi-step process patterns
-- [output-patterns.md](.claude/skills/skill-creator/references/output-patterns.md) - Output quality patterns
+- [SKILL.md](.claude/skills/skill-generator/SKILL.md) - Complete creation guide (356 lines)
+- [workflows.md](.claude/skills/skill-generator/references/workflows.md) - Multi-step process patterns
+- [output-patterns.md](.claude/skills/skill-generator/references/output-patterns.md) - Output quality patterns
 
 **Quick Start:**
 ```bash
 # Initialize a new skill
-python .claude/skills/skill-creator/scripts/init_skill.py my-skill --path ./output
+python .claude/skills/skill-generator/scripts/init_skill.py my-skill --path ./output
 
 # Validate a skill
-python .claude/skills/skill-creator/scripts/quick_validate.py .claude/skills/my-skill
+python .claude/skills/skill-generator/scripts/quick_validate.py .claude/skills/my-skill
 
 # Package a skill
-python .claude/skills/skill-creator/scripts/package_skill.py .claude/skills/my-skill
+python .claude/skills/skill-generator/scripts/package_skill.py .claude/skills/my-skill
 ```
 
 ---
@@ -118,7 +120,7 @@ Auto-generates skills
         ↓
 New skills ready immediately!
         ↓
-Claude uses them automatically
+AI assistant uses them
         ↓
 New skills use SOUL API
         ↓
@@ -183,15 +185,19 @@ crontab -e
 */30 * * * * /path/to/your/project/.claude/skills/scripts/nexus_auto_watch.sh
 ```
 
-### 4. Use with Claude Code
+### 4. Use with Your AI Assistant
 
 ```bash
-# Claude automatically loads skills from .claude/skills/
-claude
+# Start your preferred AI assistant (examples):
+claude          # Claude Code
+gpt             # OpenAI GPT
+gemini          # Google Gemini
+cursor          # Cursor AI
+aider           # Aider
 
 # SOUL will track your work
 # NEXUS will analyze patterns
-# Skills will be generated automatically
+# Skills enhance your workflow
 ```
 
 ---
@@ -203,7 +209,7 @@ All skills in MetaSkill follow these standards:
 ✅ **Progressive Disclosure**: SKILL.md < 500 lines, details in references/
 ✅ **Complete Documentation**: API references, examples, workflows
 ✅ **Multi-LLM Support**: Works with Claude, GPT, Gemini, and more
-✅ **Validation**: All skills pass skill-creator validation
+✅ **Validation**: All skills pass skill-generator validation
 ✅ **Professional Code**: Clean, maintainable, well-commented
 ✅ **Comprehensive Testing**: Integration tests included
 
@@ -213,7 +219,7 @@ All skills in MetaSkill follow these standards:
 |-------|----------------|-------|--------|
 | SOUL | 149 | 10/10 | ✅ Excellent |
 | NEXUS | 231 | 10/10 | ✅ Good |
-| skill-creator | 356 | 10/10 | ✅ Good |
+| skill-generator | 356 | 10/10 | ✅ Good |
 
 ---
 
@@ -235,11 +241,11 @@ skill-name/
 ### Validation
 
 ```bash
-# Validate a skill (requires skill-creator)
-python .claude/skills/skill-creator/scripts/quick_validate.py .claude/skills/soul
+# Validate a skill (requires skill-generator)
+python .claude/skills/skill-generator/scripts/quick_validate.py .claude/skills/soul
 
 # Package a skill
-python .claude/skills/skill-creator/scripts/package_skill.py .claude/skills/nexus
+python .claude/skills/skill-generator/scripts/package_skill.py .claude/skills/nexus
 ```
 
 ---
@@ -284,27 +290,44 @@ We welcome contributions! To add or improve skills:
 - [Output Format](.claude/skills/nexus/references/OUTPUT_FORMAT.md)
 - [Multi-LLM](.claude/skills/nexus/references/MULTI_LLM.md)
 
-### skill-creator Documentation
+### skill-generator Documentation
 
-- [Complete Guide](.claude/skills/skill-creator/SKILL.md)
-- [Workflow Patterns](.claude/skills/skill-creator/references/workflows.md)
-- [Output Patterns](.claude/skills/skill-creator/references/output-patterns.md)
-- [LICENSE](.claude/skills/skill-creator/LICENSE.txt)
+- [Complete Guide](.claude/skills/skill-generator/SKILL.md)
+- [Workflow Patterns](.claude/skills/skill-generator/references/workflows.md)
+- [Output Patterns](.claude/skills/skill-generator/references/output-patterns.md)
+- [LICENSE](.claude/skills/skill-generator/LICENSE.txt)
 
 ---
 
-## 🌐 Multi-LLM Support
+## 🌐 Universal LLM Support
 
-These skills work with multiple LLM platforms:
+**All skills work identically across AI assistants.** Skills are markdown + Python - completely LLM-agnostic.
 
-| Feature | Claude Code | GPT CLI | Gemini CLI | Cursor | Aider |
-|---------|-------------|---------|------------|--------|-------|
-| SOUL memory | ✅ Full | ⚠️ API only | ⚠️ API only | ❌ No | ⚠️ API only |
-| NEXUS analysis | ✅ Auto | ⚠️ Manual | ⚠️ Manual | ⚠️ Manual | ⚠️ Semi |
-| Auto skill generation | ✅ Full | ❌ No | ❌ No | ❌ No | ⚠️ Semi |
-| Skill loading | ✅ Auto | ❌ No | ❌ No | ❌ No | ❌ No |
+### ✅ Compatible With
 
-See individual skill documentation for LLM-specific guides.
+- **Claude Code** - Full compatibility
+- **GPT (OpenAI)** - Full compatibility
+- **Gemini (Google)** - Full compatibility
+- **Cursor** - Full compatibility
+- **Aider** - Full compatibility
+- **Any AI coding assistant** - If it can read markdown and run Python, it works!
+
+### How Skills Work
+
+1. **Read** - AI assistant reads SKILL.md (markdown documentation)
+2. **Execute** - AI assistant runs scripts (Python) or follows workflows
+3. **Track** - SOUL records work automatically via git hooks
+
+No special integration needed. No vendor lock-in. Pure open formats.
+
+### LLM-Specific Notes
+
+Different AI assistants handle file reading differently:
+- Some auto-read `.agent_handoff.md` at startup
+- Others need explicit prompting: "Read .agent_handoff.md"
+- All can access Python API identically
+
+See [SOUL Multi-LLM Guide](.claude/skills/soul/references/MULTI_LLM.md) for specific setup instructions per assistant.
 
 ---
 
@@ -372,9 +395,9 @@ chmod +x .claude/skills/scripts/*.sh
 
 ## 🙏 Acknowledgments
 
-- Built for [Claude Code](https://claude.com/claude-code)
-- Follows [Claude Skills best practices](https://docs.claude.com/)
-- Generated and validated with Claude AI
+- Built for the AI coding assistant ecosystem
+- Follows progressive disclosure and skill design best practices
+- Open source, LLM-agnostic, community-driven
 
 ---
 
