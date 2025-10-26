@@ -38,6 +38,73 @@ System gets better forever
 
 ---
 
+## How It Works - Visual Overview
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                          YOU CODE NORMALLY                        │
+│                     (git commits, file changes)                   │
+└──────────────────────────────────────────────────────────────────┘
+                                   ↓
+        ┌──────────────────────────────────────────────────┐
+        │         CORTEX (Memory Brain)                    │
+        │  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │
+        │  • Tracks EVERYTHING via git hooks               │
+        │  • Creates .cortex_log.md (session history)      │
+        │  • Creates .cortex_status.json (current state)   │
+        │  • Creates .cortex_handoff.md (next session)     │
+        │                                                   │
+        │  → Your AI reads these files for context         │
+        └──────────────────────────────────────────────────┘
+                                   ↓
+        ┌──────────────────────────────────────────────────┐
+        │        SYNAPSE (Pattern Brain)                   │
+        │  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │
+        │  • Reads Cortex memory files                     │
+        │  • Detects recurring patterns                    │
+        │  • Threshold: 5+ similar tasks                   │
+        │  • Priority: Critical (2+/day) → Low (<3/week)   │
+        │                                                   │
+        │  → Generates SYNAPSE_RECOMMENDATIONS.md          │
+        └──────────────────────────────────────────────────┘
+                                   ↓
+        ┌──────────────────────────────────────────────────┐
+        │          FORGE (Skill Builder)                   │
+        │  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │
+        │  • Takes Synapse recommendations                 │
+        │  • Uses Cortex context for details               │
+        │  • Generates custom skill code                   │
+        │  • Validates and packages                        │
+        │                                                   │
+        │  → Creates .claude/skills/your-new-skill/        │
+        └──────────────────────────────────────────────────┘
+                                   ↓
+        ┌──────────────────────────────────────────────────┐
+        │           NEW CUSTOM SKILLS                       │
+        │  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │
+        │  • Tailored to YOUR workflow                     │
+        │  • Use Cortex API to record events               │
+        │  • Make your AI faster at specific tasks         │
+        └──────────────────────────────────────────────────┘
+                                   ↓
+                    ┌──────────────────────────┐
+                    │   BETTER PATTERNS  ──────┼───┐
+                    └──────────────────────────┘   │
+                                   ↓               │
+                         LOOP CONTINUES ───────────┘
+                    (System gets smarter forever)
+```
+
+### The Self-Improving Cycle
+
+1. **Week 1**: Cortex tracks your work → Creates memory
+2. **Week 2**: Synapse analyzes → Detects you debug APIs 8 times
+3. **Week 3**: Forge creates → "api-debugger" skill custom to you
+4. **Week 4+**: AI uses new skill → Works 70% faster on API tasks
+5. **Forever**: New patterns emerge → More skills generated → Intelligence compounds
+
+---
+
 ## Real Examples (All Three Working Together)
 
 ### Sarah - API Authentication Work
